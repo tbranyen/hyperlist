@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Virtual Rendering 1,000,000 Items - DOM approach - js do it</title>
+  <link rel="stylesheet" type="text/css" media="screen,print" href="style.css"/>
+</head>
+<body>
+<script type="text/javascript" src="index2.js"></script>
+<script>
+  var bigAssList = [];
+  for (var i = 0; i < 10000; i++) {
+    var el = document.createElement("div");
+    el.classList.add("item");
+    el.innerHTML = "ITEM " + i;
+    el.style.borderBottom = "1px solid red";
+    el.style.position = "absolute"
+    bigAssList.push(el);
+  }
+
+  var list = new ScrollableList({
+//    w: 300,
+    h: 700,
+    items: bigAssList,
+    itemHeight: 31
+  });
+
+  document.body.style.overflow = "hidden";
+  document.body.appendChild(list.container)
+</script>
+</body>
+</html>
