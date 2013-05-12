@@ -1,4 +1,6 @@
 /**
+ * The MIT License (MIT)
+ *
  * Copyright (C) 2013 Sergi Mansilla
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
