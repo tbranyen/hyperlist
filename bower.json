@@ -1,0 +1,11 @@
+{
+  "name": "virtual-list",
+  "version": "1.0.0",
+  "main": "vlist.js",
+  "ignore": [
+    ".jshintrc",
+    "README.md"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}
