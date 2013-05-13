@@ -31,21 +31,20 @@
  */
 function VirtualList(config) {
   var width = (config && config.w + 'px') || '100%';
-  var height = this.height = (config && config.h + 'px') || '100%';
+  var height = (config && config.h + 'px') || '100%';
   var itemHeight = this.itemHeight = config.itemHeight;
 
   this.items = config.items;
   this.generatorFn = config.generatorFn;
   this.totalRows = config.totalRows || (config.items && config.items.length);
 
-  var totalHeight = itemHeight * this.totalRows;
-  this.scroller = VirtualList.createScroller(totalHeight);
+  this.scroller = VirtualList.createScroller(itemHeight * this.totalRows);
   this.container = VirtualList.createContainer(width, height);
 
   var screenItemsLen = Math.ceil(config.h / itemHeight);
   // Cache 4 times the number of items that fit in the container viewport
-  var cachedItemsLen = screenItemsLen * 3;
-  this._renderChunk(this.container, 0, cachedItemsLen / 2);
+  this.cachedItemsLen = screenItemsLen * 3;
+  this._renderChunk(this.container, 0);
 
   var self = this;
   var lastRepaintY;
@@ -56,7 +55,7 @@ function VirtualList(config) {
     var first = parseInt(scrollTop / itemHeight) - screenItemsLen;
     first = first < 0 ? 0 : first;
     if (!lastRepaintY || Math.abs(scrollTop - lastRepaintY) > maxBuffer) {
-      self._renderChunk(self.container, first, cachedItemsLen);
+      self._renderChunk(self.container, first);
       lastRepaintY = scrollTop;
     }
 
@@ -66,40 +65,43 @@ function VirtualList(config) {
   this.container.addEventListener('scroll', onScroll);
 }
 
+VirtualList.prototype.createRow = function(i) {
+  var item;
+  if (this.generatorFn)
+    item = this.generatorFn(i);
+  else if (this.items) {
+    if (typeof this.items[i] === 'string') {
+      var itemText = document.createTextNode(this.items[i]);
+      item = document.createElement('div');
+      item.style.height = this.itemHeight + "px";
+      item.appendChild(itemText);
+    } else {
+      item = this.items[i];
+    }
+  }
+
+  item.classList.add('vrow');
+  item.style.position = 'absolute';
+  item.style.top = (i * this.itemHeight) + 'px';
+  return item;
+};
+
 /**
  * Renders a particular, consecutive chunk of the total rows in the list.
  * @param {Node} node
  * @param {Number} fromPos
- * @param {Number} howMany
  * @return {void}
  */
-VirtualList.prototype._renderChunk = function(node, fromPos, howMany) {
+VirtualList.prototype._renderChunk = function(node, fromPos) {
   var fragment = document.createDocumentFragment();
   fragment.appendChild(this.scroller);
 
-  var finalItem = fromPos + howMany;
+  var finalItem = fromPos + this.cachedItemsLen;
   if (finalItem > this.totalRows)
     finalItem = this.totalRows;
 
   for (var i = fromPos; i < finalItem; i++) {
-    var item;
-    if (this.generatorFn)
-      item = this.generatorFn(i);
-    else {
-      if (typeof this.items[i] === 'string') {
-        var itemText = document.createTextNode(this.items[i]);
-        item = document.createElement('div');
-        item.style.height = this.height;
-        item.appendChild(itemText);
-      } else {
-        item = this.items[i];
-      }
-    }
-
-    item.classList.add('vrow');
-    item.style.position = 'absolute';
-    item.style.top = (i * this.itemHeight) + 'px';
-    fragment.appendChild(item);
+    fragment.appendChild(this.createRow(i));
   }
 
   node.innerHTML = '';
