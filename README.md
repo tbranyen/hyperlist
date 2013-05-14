@@ -5,9 +5,8 @@ long lists (by list I mean a single column of rows, for now) that perform extrem
 fast by loading just the part of the list showing up on the viewport, and by optimizing
 the amount of DOM operations and reflows and spend very little memory.
 
-The list could be done even faster sacrificing the momentum effect, or the scroll
-acceleration, but I decided to keep it since, particularly on mobile devices,
-that is too big of a sacrifice for the sake of speed.
+The list could be done even faster by sacrificing the 'momentum' effect, but I
+decided to keep it since it is too big of a sacrifice for the sake of speed.
 
 ## Installation
 
