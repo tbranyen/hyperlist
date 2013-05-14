@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- Meta tags that set up the page as a mobile page   -->
+  <meta name = "viewport" content = "user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta charset="UTF-8"/>
   <title>Virtual List demo</title>
   <link rel="stylesheet" type="text/css" media="screen,print" href="style.css"/>
@@ -27,17 +31,17 @@
   */
 
   var list = new VirtualList({
-    w: 300,
-    h: 300,
-    itemHeight: 31,
-    totalRows: 1000000,
+    h: window.innerHeight,
+    itemHeight: 30,
+    totalRows: 100000,
     generatorFn: function(row) {
       var el = document.createElement("div");
-      el.innerHTML = "ITEM " + row;
+      el.innerHTML = "<p>ITEM " + row + "</p>";
       return el;
     }
   });
 
+  list.container.classList.add("container");
   document.body.appendChild(list.container)
 </script>
 </body>

@@ -3,12 +3,39 @@ body, html {
   margin: 0;
   height: 100%;
   width: 100%;
+  min-height: 100%;
+  min-width: 100%;
 }
-
 body {
   overflow: hidden;
 }
 
+@media
+only screen and (-webkit-min-device-pixel-ratio : 1.5),
+only screen and (min-device-pixel-ratio : 1.5) {
+  /* Styles */
+  .container {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+  }
+}
+
 .vrow {
-  border-bottom: 1px solid red;
+  width: 100%;
+  height: 30px;
+  max-height: 30px;
+  /*border-bottom: solid 1px #dbd9d9;*/
+  color: #000;
+  margin: 0;
+}
+
+.vrow p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: none;
+  margin: 0;
+  color: #5b5b5b;
+  /*font-size: 1.5rem;*/
 }
