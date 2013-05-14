@@ -4,7 +4,7 @@
  * Copyright (C) 2013 Sergi Mansilla
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files (the 'Software'), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
  * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -38,8 +38,9 @@ function VirtualList(config) {
   this.generatorFn = config.generatorFn;
   this.totalRows = config.totalRows || (config.items && config.items.length);
 
-  this.scroller = VirtualList.createScroller(itemHeight * this.totalRows);
+  var scroller = VirtualList.createScroller(itemHeight * this.totalRows);
   this.container = VirtualList.createContainer(width, height);
+  this.container.appendChild(scroller);
 
   var screenItemsLen = Math.ceil(config.h / itemHeight);
   // Cache 4 times the number of items that fit in the container viewport
@@ -49,6 +50,18 @@ function VirtualList(config) {
   var self = this;
   var lastRepaintY;
   var maxBuffer = screenItemsLen * itemHeight;
+  var lastScrolled = 0;
+
+  // As soon as scrolling has stopped, this interval asynchronouslyremoves all
+  // the nodes that are not used anymore
+  this.rmNodeInterval = setInterval(function() {
+    if (Date.now() - lastScrolled > 100) {
+      var badNodes = document.querySelectorAll('[data-rm="1"]');
+      for (var i = 0, l = badNodes.length; i < l; i++) {
+        self.container.removeChild(badNodes[i]);
+      }
+    }
+  }, 200);
 
   function onScroll(e) {
     var scrollTop = e.target.scrollTop;
@@ -59,6 +72,7 @@ function VirtualList(config) {
       lastRepaintY = scrollTop;
     }
 
+    lastScrolled = Date.now();
     e.preventDefault && e.preventDefault();
   }
 
@@ -73,7 +87,7 @@ VirtualList.prototype.createRow = function(i) {
     if (typeof this.items[i] === 'string') {
       var itemText = document.createTextNode(this.items[i]);
       item = document.createElement('div');
-      item.style.height = this.itemHeight + "px";
+      item.style.height = this.itemHeight + 'px';
       item.appendChild(itemText);
     } else {
       item = this.items[i];
@@ -87,24 +101,32 @@ VirtualList.prototype.createRow = function(i) {
 };
 
 /**
- * Renders a particular, consecutive chunk of the total rows in the list.
- * @param {Node} node
- * @param {Number} fromPos
+ * Renders a particular, consecutive chunk of the total rows in the list. To
+ * keep acceleration while scrolling, we mark the nodes that are candidate for
+ * deletion instead of deleting them right away, which would suddenly stop the
+ * acceleration. We delete them once scrolling has finished.
+ *
+ * @param {Node} node Parent node where we want to append the children chunk.
+ * @param {Number} from Starting position, i.e. first children index.
  * @return {void}
  */
-VirtualList.prototype._renderChunk = function(node, fromPos) {
-  var fragment = document.createDocumentFragment();
-  fragment.appendChild(this.scroller);
-
-  var finalItem = fromPos + this.cachedItemsLen;
+VirtualList.prototype._renderChunk = function(node, from) {
+  var finalItem = from + this.cachedItemsLen;
   if (finalItem > this.totalRows)
     finalItem = this.totalRows;
 
-  for (var i = fromPos; i < finalItem; i++) {
+  // Append all the new rows in a document fragment that we will later append to
+  // the parent node
+  var fragment = document.createDocumentFragment();
+  for (var i = from; i < finalItem; i++) {
     fragment.appendChild(this.createRow(i));
   }
 
-  node.innerHTML = '';
+  // Hide and mark obsolete nodes for deletion.
+  for (var j = 1, l = node.childNodes.length; j < l; j++) {
+    node.childNodes[j].style.display = 'none';
+    node.childNodes[j].setAttribute('data-rm', '1');
+  }
   node.appendChild(fragment);
 };
 

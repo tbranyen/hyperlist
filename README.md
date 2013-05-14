@@ -1,8 +1,13 @@
-# Virtual DOM List
+## Virtual DOM List
 
 This virtual list is a simple component allows the developer to create massively
 long lists (by list I mean a single column of rows, for now) that perform extremely
-fast by loading just the part of the list showing up on the viewport, and by optimizing the amount of DOM operations and reflows and spend very little memory.
+fast by loading just the part of the list showing up on the viewport, and by optimizing
+the amount of DOM operations and reflows and spend very little memory.
+
+The list could be done even faster sacrificing the momentum effect, or the scroll
+acceleration, but I decided to keep it since, particularly on mobile devices,
+that is too big of a sacrifice for the sake of speed.
 
 ## Installation
 
@@ -72,6 +77,14 @@ var list = new ScrollableList({
 });
 document.body.appendChild(list.container)
 ```
+
+## Caveats
+
+Firefox has a nasty bug (https://bugzilla.mozilla.org/show_bug.cgi?id=373875)
+that breaks any attempt od assigning big numerical values to css properties.
+Since the virtual list does exactly that to give the illusion of a very big list
+without actually loading the components, you might run into that bug for very big
+lists. Unfortunately, I haven't found a way to work around it yet.
 
 ## License
 
