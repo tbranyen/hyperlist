@@ -1,16 +1,18 @@
 ## Virtual DOM List
 
-This virtual list is a simple component allows the developer to create massively
-long lists (by list I mean a single column of rows, for now) that perform extremely
-fast by loading just the part of the list showing up on the viewport, and by optimizing
-the amount of DOM operations and reflows and spend very little memory.
+This is a simple component that allows the developer to create very
+long lists (by list I mean a single column of rows) that perform extremely
+fast. It does so by loading just the part of the list showing up on the viewport, and by optimizing
+the amount of DOM operations and reflows. It also spends very little memory.
 
 The list could be done even faster by sacrificing the 'momentum' effect, but I
 decided to keep it since it is too big of a sacrifice for the sake of speed.
 
 ## Installation
 
-The virtual DOM list can be installed using bower:
+    npm install virtual-list
+
+Or if you prefer bower:
 
     bower install virtual-list
 
@@ -43,7 +45,7 @@ document.body.appendChild(list.container)
 
 // The code below will create an array of 10000 DOM elements beforehand and pass them to
 // the list. The Virtual list will then display them on demand. Of course, even if the
-// virtual list is smart about displaying them, this method fills up a lot of memory by 
+// virtual list is smart about displaying them, this method fills up a lot of memory by
 // creating the elements before-hand.
 var bigAssList = [];
 for (var i = 0; i < 10000; i++) {
@@ -80,7 +82,7 @@ document.body.appendChild(list.container)
 ## Caveats
 
 Firefox has a nasty bug (https://bugzilla.mozilla.org/show_bug.cgi?id=373875)
-that breaks any attempt od assigning big numerical values to css properties.
+that breaks any attempt of assigning big numerical values to css properties.
 Since the virtual list does exactly that to give the illusion of a very big list
 without actually loading the components, you might run into that bug for very big
 lists. Unfortunately, I haven't found a way to work around it yet.
