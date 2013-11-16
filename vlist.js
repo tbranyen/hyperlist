@@ -61,14 +61,13 @@ function VirtualList(config) {
         self.container.removeChild(badNodes[i]);
       }
     }
-  }, 200);
+  }, 300);
 
   function onScroll(e) {
-    var scrollTop = e.target.scrollTop;
-    var first = parseInt(scrollTop / itemHeight) - screenItemsLen;
-    first = first < 0 ? 0 : first;
+    var scrollTop = e.target.scrollTop; // Triggers reflow
     if (!lastRepaintY || Math.abs(scrollTop - lastRepaintY) > maxBuffer) {
-      self._renderChunk(self.container, first);
+      var first = parseInt(scrollTop / itemHeight) - screenItemsLen;
+      self._renderChunk(self.container, first < 0 ? 0 : first);
       lastRepaintY = scrollTop;
     }
 
