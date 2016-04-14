@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Hyper List Demo w/ diffHTML</title>
+
+  <style>
+    body, html {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      min-height: 100%;
+      min-width: 100%;
+      text-align: center;
+      background-color: #F1F1F1;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    @media
+    only screen and (-webkit-min-device-pixel-ratio : 1.5),
+    only screen and (min-device-pixel-ratio : 1.5) {
+      .container {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+      }
+    }
+
+    table {
+      width: 100%; 
+      height: 100%;
+      display: block;
+    }
+
+    table tbody, table thead { display: block; }
+
+    table thead {
+      text-align: center;
+      width: calc(100% - 15px);
+      height: 28px;
+      line-height: 26px;
+      padding-right: 15px;
+    }
+
+    .container {
+      background-color: #FFF;
+    }
+
+    tr {
+      display: block;
+      width: 100%;
+      margin: 0;
+      margin-top: 1px;
+      margin-bottom: 1px;
+      box-sizing: border-box;
+    }
+
+    tbody tr {
+      font-size: 10px;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(0, 255, 255, 0.21);
+    }
+
+    th, td {
+      width: calc(20% - 10px);
+      display: inline-block;
+      text-align: left;
+    }
+
+    .vrow p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+<script src="../node_modules/faker/build/build/faker.js"></script>
+<script src="../dist/hyperlist.js"></script>
+
+<script>
+  var table = document.createElement('table');
+  var thead = document.createElement('thead');
+  var tbody = document.createElement('tbody');
+
+  var pool = new Array(50).fill(null).map((row, i) => ({
+    ip: faker.internet.ip(),
+    name: faker.name.findName(),
+    email: faker.internet.email()
+  }));
+
+  var count = 2000000;
+  var data = new Array(count);
+
+  for (let i = 0; i < count; i++) {
+    data[i] = Object.assign({}, pool[Math.floor(Math.random() * pool.length)], {
+      id: i + 1
+    });
+  }
+
+  var config = {
+    height: window.innerHeight - 28,
+    itemHeight: 12,
+    total: count,
+
+    // Set to true to put into 'chat mode'.
+    reverse: false,
+
+    generate(row) {
+      var el = document.createElement('tr');
+      var d = data[row];
+
+      el.innerHTML = `
+        <td>${d.id}</td>
+        <td>${d.ip}</td>
+        <td>${d.name}</td>
+        <td>${d.email}</td>
+      `;
+      return el;
+    }
+  };
+
+  var list = HyperList.default.create(tbody, config);
+
+  window.onresize = function(e) {
+    config.height = window.innerHeight - 28;
+    list.refresh(tbody, config);
+  };
+
+  tbody.classList.add('container');
+
+  thead.innerHTML = `<tr>
+    <th>Index</th>
+    <th>IP Addr</th>
+    <th>Customer Name</th>
+    <th>Customer Email</th>
+  </tr>`;
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+
+  document.body.appendChild(table)
+</script>
+</body>
+</html>
