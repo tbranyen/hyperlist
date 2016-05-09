@@ -9,6 +9,10 @@ easy to parse and use.
 
 ![Demo](/example.gif?raw=true)
 
+- [Basic example](http://tbranyen.github.io/hyperlist/examples/basic.html)
+- [2 Million Rows](http://tbranyen.github.io/hyperlist/examples/2-million-rows.html)
+  - May take a minute to generate the data before anything shows up...
+
 ## Installation
 
 ```sh
