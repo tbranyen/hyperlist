@@ -149,7 +149,7 @@ var HyperList = function () {
       var maxElementHeight = HyperList.maxElementHeight;
 
       if (scrollerHeight > maxElementHeight) {
-        console.warn(['HyperList: The maximum element height ${maxElementHeight}px has', 'been exceeded, please reduce your item height.'].join());
+        console.warn(['HyperList: The maximum element height ' + maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join());
       }
 
       scroller.setAttribute('style', '\n      opacity: 0;\n      position: absolute;\n      width: 1px;\n      height: ' + scrollerHeight + 'px;\n    ');
