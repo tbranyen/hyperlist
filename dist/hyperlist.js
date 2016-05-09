@@ -191,7 +191,7 @@ var HyperList = function () {
       var offsetTop = i * itemHeight;
       var top = reverse ? (total - 1) * itemHeight - offsetTop : offsetTop;
 
-      item.setAttribute('style', 'position: absolute; top: ' + top + 'px');
+      item.setAttribute('style', '\n      ' + item.style.cssText + '\n      position: absolute;\n      top: ' + top + 'px\n    ');
 
       return item;
     }
