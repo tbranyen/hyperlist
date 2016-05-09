@@ -1,6 +1,6 @@
 {
   "name": "hyperlist",
-  "version": "1.0.0-alpha-1",
+  "version": "1.0.0-alpha-2",
   "description": "A performant virtual scrolling list library",
   "devDependencies": {
     "babel-core": "^6.6.0",
