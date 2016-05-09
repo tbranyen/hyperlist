@@ -123,3 +123,11 @@ window.onresize = () => {
   list.refresh(container, config);
 };
 ```
+
+## Credits
+
+This project is a fork of the existing (unmaintained) project:
+https://github.com/sergi/virtual-list
+
+This README section, the LICENSE, and package.json will remain to ensure
+proper credit is always extended.
