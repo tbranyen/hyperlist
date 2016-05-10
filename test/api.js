@@ -1,7 +1,8 @@
 require('./_setup');
 
-const assert = require('assert');
-const HyperList = require('../');
+import './_setup';
+import assert from 'assert';
+import HyperList from '../lib/index';
 
 describe('API', () => {
   var fixture = null;
@@ -10,22 +11,21 @@ describe('API', () => {
     fixture = document.createElement('div');
   });
 
-  it('requires being called with default in ES5', () => {
-    assert.notEqual(typeof HyperList, 'function');
-    assert.equal(typeof HyperList.default, 'function');
+  it('can be imported with ES6', () => {
+    assert.equal(typeof HyperList, 'function');
   });
 
   it('can be initialized with new', () => {
-    var actual = new HyperList.default(fixture, {
+    var actual = new HyperList(fixture, {
       generate() {},
       total: 0
     });
 
-    assert.ok(actual instanceof HyperList.default);
+    assert.ok(actual instanceof HyperList);
   });
 
   it('is not easy to access private members', () => {
-    var actual = new HyperList.default(fixture, {
+    var actual = new HyperList(fixture, {
       generate() {},
       total: 0
     });
@@ -35,7 +35,7 @@ describe('API', () => {
   });
 
   it('is not easy to access private members', () => {
-    var actual = new HyperList.default(fixture, {
+    var actual = new HyperList(fixture, {
       generate() {},
       total: 0
     });
