@@ -1,6 +1,6 @@
 ## HyperList
 
-[![Build Status](https://travis-ci.org/tbranyen/hyperlist.svg?branch=testing)](https://travis-ci.org/tbranyen/hyperlist)
+[![Build Status](https://travis-ci.org/tbranyen/hyperlist.svg)](https://travis-ci.org/tbranyen/hyperlist)
 
 This is a simple component that can be dropped into any JavaScript application
 and provide a virtual scrolling area that is highly performant and lightweight.
