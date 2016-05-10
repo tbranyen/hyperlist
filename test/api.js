@@ -1,46 +1,60 @@
 require('./_setup');
 
-const assert = require('assert');
-const HyperList = require('../');
+import './_setup';
+import assert from 'assert';
+import HyperList from '../lib/index';
 
-describe('API', () => {
-  var fixture = null;
-
+describe('API', function() {
   beforeEach(() => {
-    fixture = document.createElement('div');
+    this.fixture = document.createElement('div');
   });
 
-  it('requires being called with default in ES5', () => {
-    assert.notEqual(typeof HyperList, 'function');
-    assert.equal(typeof HyperList.default, 'function');
+  afterEach(() => {
+    if (this.actual) {
+      this.actual.destroy();
+    }
+  });
+
+  it('can be imported with ES6', () => {
+    assert.equal(typeof HyperList, 'function');
   });
 
   it('can be initialized with new', () => {
-    var actual = new HyperList.default(fixture, {
+    this.actual = new HyperList(this.fixture, {
       generate() {},
       total: 0
     });
 
-    assert.ok(actual instanceof HyperList.default);
+    assert.ok(this.actual instanceof HyperList);
+  });
+
+  it('can be initialized with create', () => {
+    this.actual = HyperList.create(this.fixture, {
+      generate() {},
+      total: 0
+    });
+
+    assert.ok(this.actual instanceof HyperList);
   });
 
   it('is not easy to access private members', () => {
-    var actual = new HyperList.default(fixture, {
+    this.actual = new HyperList(this.fixture, {
       generate() {},
       total: 0
     });
 
-    assert.equal(actual.config, undefined);
-    assert.equal(actual[Symbol('config')], undefined);
+    assert.equal(this.actual.config, undefined);
+    assert.equal(this.actual[Symbol('config')], undefined);
   });
 
-  it('is not easy to access private members', () => {
-    var actual = new HyperList.default(fixture, {
+  it('can destroy an instance', () => {
+    this.actual = new HyperList(this.fixture, {
       generate() {},
       total: 0
     });
 
-    assert.equal(actual.config, undefined);
-    assert.equal(actual[Symbol('config')], undefined);
+    assert.doesNotThrow(() => {
+      this.actual.destroy();
+    });
   });
 });
