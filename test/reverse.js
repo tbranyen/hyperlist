@@ -24,8 +24,8 @@ describe('Reverse feature', function() {
     });
 
     setTimeout(() => {
-      assert.equal(this.fixture.scrollTop, 499950);
+      assert.equal(this.fixture.scrollTop, 500000);
       done();
-    }, 100);
+    }, 10);
   });
 });

@@ -59,10 +59,8 @@ var HyperList = function () {
     }
   }]);
 
-  function HyperList(element) {
+  function HyperList(element, userProvidedConfig) {
     var _this = this;
-
-    var userProvidedConfig = arguments.length <= 1 || arguments[1] === undefined ? defaultConfig : arguments[1];
 
     _classCallCheck(this, HyperList);
 
@@ -76,7 +74,7 @@ var HyperList = function () {
 
     if (config.reverse) {
       requestAnimationFrame(function () {
-        element.scrollTop = (config.total - 1) * config.itemHeight;
+        element.scrollTop = config.total * config.itemHeight;
       });
     }
 
