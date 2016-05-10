@@ -189,7 +189,7 @@ var HyperList = function () {
         throw new Error('Generator did not return a DOM Node for index: ' + i);
       }
 
-      item.classList.add(config.rowClassName || 'vrow');
+      item.className = item.className + ' ' + (config.rowClassName || 'vrow');
 
       var offsetTop = i * itemHeight;
       var top = reverse ? (total - 1) * itemHeight - offsetTop : offsetTop;

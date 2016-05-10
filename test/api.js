@@ -57,4 +57,52 @@ describe('API', function() {
       this.actual.destroy();
     });
   });
+
+  it('can override the patch method', (done) => {
+    this.actual = new HyperList(this.fixture, {
+      generate(i) {
+        var el = document.createElement('div');
+        el.innerHTML = i;
+        return el;
+      },
+
+      applyPatch(element, fragment) {
+        assert.equal(fragment.childNodes.length, 4);
+        done();
+      },
+
+      overrideScrollPosition() {
+        return 0;
+      },
+
+      height: 5,
+      total: 3,
+      itemHeight: 1,
+    });
+  });
+
+  it('supports string based height', (done) => {
+    this.fixture.offsetHeight = 500;
+
+    this.actual = new HyperList(this.fixture, {
+      generate(i) {
+        var el = document.createElement('div');
+        el.innerHTML = i;
+        return el;
+      },
+
+      overrideScrollPosition() {
+        return 0;
+      },
+
+      height: '100%',
+      total: 3,
+      itemHeight: 1,
+    });
+
+    requestAnimationFrame(() => {
+      assert.equal(this.fixture.style.height, '100%');
+      done();
+    });
+  });
 });

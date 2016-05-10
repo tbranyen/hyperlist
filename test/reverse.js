@@ -23,9 +23,37 @@ describe('Reverse feature', function() {
       reverse: true
     });
 
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       assert.equal(this.fixture.scrollTop, 500000);
       done();
-    }, 10);
+    });
+  });
+
+  it('can render in reverse', (done) => {
+    this.actual = new HyperList(this.fixture, {
+      generate(i) {
+        const el = document.createElement('div');
+        el.innerHTML = i;
+        return el;
+      },
+
+      applyPatch(element, fragment) {
+        const actual = Array.from(fragment.childNodes).map(childNode => {
+          return childNode.innerHTML;
+        }).filter(Boolean);
+
+        assert.deepEqual(actual, [2, 1, 0]);
+        done();
+      },
+
+      overrideScrollPosition() {
+        return 0;
+      },
+
+      height: 5,
+      total: 3,
+      itemHeight: 1,
+      reverse: true,
+    });
   });
 });
