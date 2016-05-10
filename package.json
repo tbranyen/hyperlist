@@ -12,7 +12,7 @@
     "faker": "^3.1.0",
     "istanbul": "^1.0.0-alpha.2",
     "mocha": "^2.4.5",
-    "stringdom": "^0.2.0",
+    "stringdom": "jugglinmike/stringdom#f42ad65227fc4e5a1d120ae432c7ec4eaf6aa11b",
     "watchify": "^3.7.0"
   },
   "keywords": [
