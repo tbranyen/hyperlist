@@ -4,5 +4,6 @@ const Document = require('stringdom');
 global.document = new Document();
 global.document.body = document.createElement('body');
 
-// Ensure requestAnimationFrame is a thing.
-global.requestAnimationFrame = fn => setTimeout(fn, 100);
+// Ensure (request|cancel)AnimationFrame is a thing.
+global.requestAnimationFrame = fn => setTimeout(fn, 10);
+global.cancelAnimationFrame = timeout => clearTimeout(timeout);

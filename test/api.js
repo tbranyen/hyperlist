@@ -4,11 +4,15 @@ import './_setup';
 import assert from 'assert';
 import HyperList from '../lib/index';
 
-describe('API', () => {
-  var fixture = null;
-
+describe('API', function() {
   beforeEach(() => {
-    fixture = document.createElement('div');
+    this.fixture = document.createElement('div');
+  });
+
+  afterEach(() => {
+    if (this.actual) {
+      this.actual.destroy();
+    }
   });
 
   it('can be imported with ES6', () => {
@@ -16,31 +20,41 @@ describe('API', () => {
   });
 
   it('can be initialized with new', () => {
-    var actual = new HyperList(fixture, {
+    this.actual = new HyperList(this.fixture, {
       generate() {},
       total: 0
     });
 
-    assert.ok(actual instanceof HyperList);
+    assert.ok(this.actual instanceof HyperList);
+  });
+
+  it('can be initialized with create', () => {
+    this.actual = HyperList.create(this.fixture, {
+      generate() {},
+      total: 0
+    });
+
+    assert.ok(this.actual instanceof HyperList);
   });
 
   it('is not easy to access private members', () => {
-    var actual = new HyperList(fixture, {
+    this.actual = new HyperList(this.fixture, {
       generate() {},
       total: 0
     });
 
-    assert.equal(actual.config, undefined);
-    assert.equal(actual[Symbol('config')], undefined);
+    assert.equal(this.actual.config, undefined);
+    assert.equal(this.actual[Symbol('config')], undefined);
   });
 
-  it('is not easy to access private members', () => {
-    var actual = new HyperList(fixture, {
+  it('can destroy an instance', () => {
+    this.actual = new HyperList(this.fixture, {
       generate() {},
       total: 0
     });
 
-    assert.equal(actual.config, undefined);
-    assert.equal(actual[Symbol('config')], undefined);
+    assert.doesNotThrow(() => {
+      this.actual.destroy();
+    });
   });
 });
