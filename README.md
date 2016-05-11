@@ -26,8 +26,8 @@ of a single JavaScript file.
 
 ## Usage
 
-Below is a full example of typical usage. It does not show any optional
-configuration options. Minor documentation supplements it.
+Below are full code examples containing typical usage. Documentation
+supplements the code comments so hopefully everything makes sense!
 
 #### Invocation
 
@@ -59,6 +59,10 @@ list.refresh(element, newConfig);
 - `generate` A function that is called with the index to render. You return an
   element to render in that position.
 
+#### Basic example
+
+A simple example with just the required options.
+
 ``` javascript
 // Create a container element or find one that already exists in the DOM.
 const container = document.createElement('div');
@@ -81,11 +85,7 @@ const list = HyperList.create(container, {
   // in the container.
   generate(index) {
     const el = document.createElement('div');
-
-    el.innerHTML = `ITEM ${index}`;
-    el.style.borderBottom = '1px solid red';
-    el.style.position = 'absolute'
-
+    el.innerHTML = `ITEM ${index + 1}`;
     return el;
   },
 });
@@ -94,10 +94,35 @@ const list = HyperList.create(container, {
 document.body.appendChild(container);
 ```
 
+#### Optional Options
+
+These configuration options are totally optional. So set them when you need to
+go beyond the defaults and required options.
+
+- `reverse` This will render items from the bottom of the container instead of
+  the top. This works much better for chat and notifications experiences. This
+  option will automatically scroll the container to the bottom every time the
+  refresh method is called and during instantiation.
+- `scrollerTagName` Is a TR by default which works fine in most cases. If you
+  need a different element tag name, specify it here.
+- `total` The number of items in the list.
+- `rowClassName` Any custom classes to add to the row.
+- `overrideScrollPosition` Pull the scrollTop value from somewhere else, this
+  allows for binding range elements to the scroll position.
+- `applyPatch` Is called with the container element and the DocumentFragment
+  which contains all the items being added. You can implement Virtual DOM
+  patching with this hook.
+- `afterRender` - Triggered after `applyPatch` has returned.
+
+#### Advanced example
+
 An example with all the options, mounted to the entire page that refreshes when
-the browser resizes:
+the browser resizes.
 
 ``` javascript
+// Create a container element or find one that already exists in the DOM.
+const container = document.createElement('div');
+
 const config = {
   width: '100%',
   height: window.innerHeight,
@@ -159,6 +184,18 @@ window.onresize = () => {
   config.height = window.innerHeight;
   list.refresh(container, config);
 };
+
+// Attach the container to the DOM.
+document.body.appendChild(container);
+```
+
+## Contributing
+
+PRs are welcome, please ensure the tests pass and the code looks like the
+surrounding style:
+
+``` sh
+npm test
 ```
 
 ## Credits
