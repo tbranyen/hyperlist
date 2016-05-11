@@ -35,10 +35,10 @@ How to invoke an instance of HyperList
 
 ``` javascript
 // Using create
-const list = HyperList.create(document.body);
+const list = HyperList.create(document.body, requiredOptions);
 
 // Using new
-const list = new HyperList(document.body);
+const list = new HyperList(document.body, requiredOptions);
 ```
 
 #### Required Options
