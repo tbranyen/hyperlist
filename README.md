@@ -26,7 +26,38 @@ of a single JavaScript file.
 
 ## Usage
 
-Below is an example of typical usage:
+Below is a full example of typical usage. It does not show any optional
+configuration options. Minor documentation supplements it.
+
+#### Invocation
+
+How to invoke an instance of HyperList
+
+``` javascript
+// Using create
+const list = HyperList.create(document.body);
+
+// Using new
+const list = new HyperList(document.body);
+```
+
+#### Required Options
+
+These configuration options are not optional. So set them to avoid runtime
+errors. You can mutate them by setting a new object in the refresh method.
+
+``` javascript
+list.refresh(element, newConfig);
+```
+
+- `height` The value that is used on the container, if you use a string, it
+  will read the offsetHeight from the container after setting the css. This way
+  you can specify any unit and have it calculate correctly.
+- `itemHeight` A single value that is the height for every single element in
+  the list.
+- `total` The number of items in the list.
+- `generate` A function that is called with the index to render. You return an
+  element to render in that position.
 
 ``` javascript
 // Create a container element or find one that already exists in the DOM.
