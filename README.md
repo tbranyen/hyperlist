@@ -153,11 +153,7 @@ const config = {
   // in the container.
   generate(index) {
     const el = document.createElement('div');
-
-    el.innerHTML = `ITEM ${index}`;
-    el.style.borderBottom = '1px solid red';
-    el.style.position = 'absolute'
-
+    el.innerHTML = `ITEM ${index + 1}`;
     return el;
   },
 
