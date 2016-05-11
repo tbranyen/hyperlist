@@ -12,6 +12,7 @@
     "faker": "^3.1.0",
     "istanbul": "1.0.0-alpha.2",
     "mocha": "^2.4.5",
+    "moment": "^2.13.0",
     "stringdom": "jugglinmike/stringdom#f42ad65227fc4e5a1d120ae432c7ec4eaf6aa11b",
     "watchify": "^3.7.0"
   },
@@ -36,7 +37,7 @@
   "scripts": {
     "build": "browserify -t [ babelify ] -s HyperList lib/index.js | derequire > dist/hyperlist.js",
     "watch": "watchify -t [ babelify ] -s HyperList lib/index.js -o 'derequire > dist/hyperlist.js' -v",
-    "test": "babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R html"
+    "test": "babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec"
   },
   "author": "Tim Branyen (@tbranyen)",
   "contributors": [

@@ -48,6 +48,15 @@
       z-index: 0;
     }
 
+    .chat .history .message.left .timestamp {
+      position: absolute;
+      top: 76px;
+      color: #ECECEC;
+      left: 200px;
+      width: 100%;
+      text-align: left;
+    }
+
     .chat .history .message.right {
       right: 20%;
     }
@@ -57,6 +66,15 @@
       right: 90px;
       top: 10px;
       z-index: 0;
+    }
+
+    .chat .history .message.right .timestamp {
+      position: absolute;
+      top: 76px;
+      color: #ECECEC;
+      right: 200px;
+      width: 100%;
+      text-align: right;
     }
 
     .chat .history .message .contents {
@@ -75,6 +93,7 @@
 <div class="chat"></div>
 
 <script src="../node_modules/faker/build/build/faker.js"></script>
+<script src="../node_modules/moment/moment.js"></script>
 <script src="../dist/hyperlist.js"></script>
 
 <script>
@@ -97,21 +116,26 @@
     }
   };
 
-  var count = 150000;
+  var count = 120000;
   var data = new Array(count);
   var pool = new Array(50).fill(null).map(() => faker.lorem.sentence(10,2));
+  var randomPool = Array(50).fill(null).map(() => Math.random());
+  var currentDate = Date.now();
 
   for (let i = 0; i < count; i++) {
+    let random = randomPool[i % randomPool.length];
+
     data[i] = {
-      date: faker.date.recent(),
-      message: pool[Math.floor(Math.random() * pool.length)],
-      user: users[`user${Math.round(Math.random() + 1)}`]
+      // Subtract 10 seconds from each message.
+      date: moment(currentDate - (i * (10 * 1000))).fromNow(),
+      message: pool[Math.floor(random * pool.length)],
+      user: users[`user${Math.round(random + 1)}`]
     };
   }
 
   var config = {
     height: window.innerHeight,
-    itemHeight: 110,
+    itemHeight: 120,
     total: count,
 
     // Set to true to put into 'chat mode'.
@@ -132,7 +156,12 @@
         <div class="avatar">
           <img title="${d.user.userName}" src="${d.user.avatar}">
         </div>
+
+        <div class="timestamp">
+          ${d.date}
+        </div>
       `;
+
       return el;
     }
   };
