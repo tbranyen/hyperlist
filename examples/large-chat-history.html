@@ -148,7 +148,7 @@
 
       el.innerHTML = `
         <div style="background-color: ${d.user.color}" class="contents">
-          ${d.message}
+          ${d.message} - ${row}
         </div>
 
         <div class="avatar">
@@ -164,7 +164,7 @@
     }
   };
 
-  var list = HyperList.default.create(container, config);
+  var list = HyperList.create(container, config);
 
   window.onresize = function(e) {
     config.height = window.innerHeight;

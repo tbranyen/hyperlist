@@ -15,7 +15,11 @@ describe('Reverse feature', function () {
 
   it('sets the scrollTop after render', (done) => {
     this.actual = new HyperList(this.fixture, {
-      generate (i) { return '<div>' + i + '</div>' },
+      generate (i) {
+        const el = document.createElement('div')
+        el.innerHTML = i
+        return el
+      },
       total: 10000,
       itemHeight: 50,
       reverse: true
@@ -39,8 +43,12 @@ describe('Reverse feature', function () {
 
       applyPatch (element, fragment) {
         childNodes = fragment.map(childNode => {
-          return childNode.innerHTML
-        }).filter(Boolean)
+          if (!childNode.style.top) {
+            return false
+          }
+
+          return parseInt(childNode.style.top.replace('px', ''), 10)
+        }).filter(e => e !== false)
       },
 
       overrideScrollPosition () {
