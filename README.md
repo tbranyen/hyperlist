@@ -12,7 +12,11 @@ easy to parse and use.
 ![Demo](/example.gif?raw=true)
 
 - [Basic example](http://tbranyen.github.io/hyperlist/examples/basic.html)
+- [React integration](http://tbranyen.github.io/hyperlist/examples/react-example.html)
+- [Bind to input range](http://tbranyen.github.io/hyperlist/examples/bind-scroll-to-range.html)
 - [2 Million Rows](http://tbranyen.github.io/hyperlist/examples/2-million-rows.html)
+  - May take a minute to generate the data before anything shows up...
+- [Large Chat History](http://tbranyen.github.io/hyperlist/examples/large-chat-history.html)
   - May take a minute to generate the data before anything shows up...
 
 ## Installation

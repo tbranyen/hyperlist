@@ -180,6 +180,10 @@ var HyperList = function () {
 
       // Render after refreshing.
       this[_renderChunk]();
+
+      if (typeof config.afterRender === 'function') {
+        config.afterRender();
+      }
     }
   }, {
     key: _getRow,
