@@ -59,6 +59,8 @@ describe('API', function() {
   });
 
   it('can override the patch method', (done) => {
+    var childNodes = null;
+
     this.actual = new HyperList(this.fixture, {
       generate(i) {
         var el = document.createElement('div');
@@ -67,8 +69,7 @@ describe('API', function() {
       },
 
       applyPatch(element, fragment) {
-        assert.equal(fragment.childNodes.length, 4);
-        done();
+        childNodes = fragment.childNodes;
       },
 
       overrideScrollPosition() {
@@ -78,6 +79,11 @@ describe('API', function() {
       height: 5,
       total: 3,
       itemHeight: 1,
+    });
+
+    requestAnimationFrame(() => {
+      assert.equal(childNodes.length, 4);
+      done();
     });
   });
 

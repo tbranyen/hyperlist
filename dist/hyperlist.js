@@ -65,7 +65,7 @@ var HyperList = function () {
     _classCallCheck(this, HyperList);
 
     this[_config] = {};
-    this[_lastRepaint] = 0;
+    this[_lastRepaint] = null;
 
     this.refresh(element, userProvidedConfig);
 
@@ -120,7 +120,12 @@ var HyperList = function () {
 
       var config = this[_config];
 
-      var scroller = this[_scroller] || document.createElement(config.scrollerTagName || 'tr');
+      var scroller = this[_scroller] || config.scroller || document.createElement(config.scrollerTagName || 'tr');
+
+      // Default configuration option `useFragment` to `true`.
+      if (typeof config.useFragment !== 'boolean') {
+        this[_config].useFragment = true;
+      }
 
       if (!config.generate) {
         throw new Error('Missing required `generate` function');
@@ -147,12 +152,12 @@ var HyperList = function () {
 
       // Decorate the container element with inline styles that will match
       // the user supplied configuration.
-      element.setAttribute('style', '\n      width: ' + config.width + ';\n      height: ' + config.height + ';\n      overflow: auto;\n      position: relative;\n      padding: 0;\n    ');
+      element.setAttribute('style', '\n      width: ' + config.width + ';\n      height: ' + config.height + ';\n      overflow: auto;\n      position: relative;\n      padding: 0px;\n    ');
 
       var scrollerHeight = config.itemHeight * config.total;
 
       if (scrollerHeight > maxElementHeight) {
-        console.warn(['HyperList: The maximum element height ' + maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join());
+        console.warn(['HyperList: The maximum element height', maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join(' '));
       }
 
       scroller.setAttribute('style', '\n      opacity: 0;\n      position: absolute;\n      width: 1px;\n      height: ' + scrollerHeight + 'px;\n    ');
@@ -189,12 +194,13 @@ var HyperList = function () {
         throw new Error('Generator did not return a DOM Node for index: ' + i);
       }
 
-      item.className = item.className + ' ' + (config.rowClassName || 'vrow');
+      var oldClass = item.getAttribute('class') || '';
+      item.setAttribute('class', oldClass + ' ' + (config.rowClassName || 'vrow'));
 
       var offsetTop = i * itemHeight;
       var top = reverse ? (total - 1) * itemHeight - offsetTop : offsetTop;
 
-      item.setAttribute('style', '\n      ' + item.style.cssText + '\n      position: absolute;\n      top: ' + top + 'px\n    ');
+      item.setAttribute('style', '\n      ' + (item.style.cssText || '') + '\n      position: absolute;\n      top: ' + top + 'px\n    ');
 
       return item;
     }
@@ -226,15 +232,23 @@ var HyperList = function () {
 
       // Append all the new rows in a document fragment that we will later append
       // to the parent node
-      var fragment = document.createDocumentFragment();
+      var fragment = config.useFragment ? document.createDocumentFragment() : [
+        // Sometimes you'll pass fake elements to this tool and Fragments require
+        // real elements.
+      ];
 
-      this[_scroller] = this[_scroller].cloneNode();
+      // The element that forces the container to scroll.
+      var scroller = this[_scroller];
+
+      // Set the scroller instance to be cloned, if possible.
+      this[_scroller] = scroller.cloneNode ? scroller.cloneNode() : scroller;
 
       // Keep the scroller in the list of children.
-      fragment.appendChild(this[_scroller]);
+      fragment[config.useFragment ? 'appendChild' : 'push'](this[_scroller]);
 
       for (var i = from; i < to; i++) {
-        fragment.appendChild(getRow(config.reverse ? config.total - 1 - i : i));
+        var row = getRow(config.reverse ? config.total - 1 - i : i);
+        fragment[config.useFragment ? 'appendChild' : 'push'](row);
       }
 
       if (config.applyPatch) {

@@ -1,5 +1,3 @@
-require('./_setup');
-
 import './_setup';
 import assert from 'assert';
 import HyperList from '../lib/index';
@@ -30,6 +28,8 @@ describe('Reverse feature', function() {
   });
 
   it('can render in reverse', (done) => {
+    var childNodes = null;
+
     this.actual = new HyperList(this.fixture, {
       generate(i) {
         const el = document.createElement('div');
@@ -38,12 +38,9 @@ describe('Reverse feature', function() {
       },
 
       applyPatch(element, fragment) {
-        const actual = Array.from(fragment.childNodes).map(childNode => {
+        childNodes = fragment.map(childNode => {
           return childNode.innerHTML;
         }).filter(Boolean);
-
-        assert.deepEqual(actual, [2, 1, 0]);
-        done();
       },
 
       overrideScrollPosition() {
@@ -54,6 +51,12 @@ describe('Reverse feature', function() {
       total: 3,
       itemHeight: 1,
       reverse: true,
+      useFragment: false,
+    });
+
+    requestAnimationFrame(() => {
+      assert.deepEqual(childNodes, [2, 1, 0]);
+      done();
     });
   });
 });

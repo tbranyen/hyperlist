@@ -1,5 +1,3 @@
-require('./_setup');
-
 import './_setup';
 import assert from 'assert';
 import HyperList from '../lib/index';
