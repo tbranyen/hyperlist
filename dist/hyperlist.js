@@ -27,35 +27,42 @@ var _cachedItemsLen = Symbol('cachedItemsLen');
 var _lastRepaint = Symbol('lastRepaint');
 var _getRow = Symbol('getRow');
 var _getScrollPosition = Symbol('getScrollPosition');
-
-// Create two elements, the wrapper is `1px` tall and is transparent and
-// positioned at the top of the page. Inside that is an element that gets set
-// to 1 billion pixels. Then reads the max height the browser can calculate.
-var wrapper = document.createElement('div');
-var fixture = document.createElement('div');
-
-// As said above, these values get set to put the fixture elements into the
-// right visual state.
-wrapper.style = 'position: absolute; height: 1px; opacity: 0;';
-fixture.style = 'height: 1000000000px;';
-
-// Add the fixture into the wrapper element.
-wrapper.appendChild(fixture);
-
-// Apply to the page, the values won't kick in unless this is attached.
-document.body.appendChild(wrapper);
-
-// Get the maximum element height in pixels.
-var maxElementHeight = fixture.offsetHeight;
-
-// Remove the element immediately after reading the value.
-document.body.removeChild(wrapper);
+var _maxElementHeight = Symbol('maxElementHeight');
 
 var HyperList = function () {
   _createClass(HyperList, null, [{
     key: 'create',
     value: function create(element, userProvidedConfig) {
       return new HyperList(element, userProvidedConfig);
+    }
+  }, {
+    key: 'getMaxBrowserHeight',
+    value: function getMaxBrowserHeight() {
+      // Create two elements, the wrapper is `1px` tall and is transparent and
+      // positioned at the top of the page. Inside that is an element that gets
+      // set to 1 billion pixels. Then reads the max height the browser can
+      // calculate.
+      var wrapper = document.createElement('div');
+      var fixture = document.createElement('div');
+
+      // As said above, these values get set to put the fixture elements into the
+      // right visual state.
+      wrapper.style = 'position: absolute; height: 1px; opacity: 0;';
+      fixture.style = 'height: 1000000000px;';
+
+      // Add the fixture into the wrapper element.
+      wrapper.appendChild(fixture);
+
+      // Apply to the page, the values won't kick in unless this is attached.
+      document.body.appendChild(wrapper);
+
+      // Get the maximum element height in pixels.
+      var maxElementHeight = fixture.offsetHeight;
+
+      // Remove the element immediately after reading the value.
+      document.body.removeChild(wrapper);
+
+      return maxElementHeight;
     }
   }]);
 
@@ -66,6 +73,7 @@ var HyperList = function () {
 
     this[_config] = {};
     this[_lastRepaint] = null;
+    this[_maxElementHeight] = HyperList.getMaxBrowserHeight();
 
     this.refresh(element, userProvidedConfig);
 
@@ -155,6 +163,7 @@ var HyperList = function () {
       element.setAttribute('style', '\n      width: ' + config.width + ';\n      height: ' + config.height + ';\n      overflow: auto;\n      position: relative;\n      padding: 0px;\n    ');
 
       var scrollerHeight = config.itemHeight * config.total;
+      var maxElementHeight = this[_maxElementHeight];
 
       if (scrollerHeight > maxElementHeight) {
         console.warn(['HyperList: The maximum element height', maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join(' '));
