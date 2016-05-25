@@ -1,6 +1,6 @@
 ## HyperList
 
-[![Build Status](https://travis-ci.org/tbranyen/hyperlist.svg)](https://travis-ci.org/tbranyen/hyperlist)
+[![Build Status](https://travis-ci.org/tbranyen/hyperlist.svg?branch=master)](https://travis-ci.org/tbranyen/hyperlist)
 
 This is a simple component that can be dropped into any JavaScript application
 and provide a virtual scrolling area that is highly performant and lightweight.
@@ -113,6 +113,9 @@ go beyond the defaults and required options.
   which contains all the items being added. You can implement Virtual DOM
   patching with this hook.
 - `afterRender` - Triggered after `applyPatch` has returned.
+- `scroller` - Specify an element to be in the place of the scroller.
+- `useFragment` - Determines if a fragment is used internally or not, defaults
+  to true.
 
 #### Advanced example
 
@@ -140,8 +143,14 @@ const config = {
   // Customize the scroller tag name, defaults to tr.
   scrollerTagName: 'tr',
 
+  // Or if you want, you can specify an element which has higher precedence.
+  scroller: document.createElement('tr'),
+
   // Customize the virtual row class, defaults to vrow.
   rowClassName: 'vrow',
+
+  // Whether or not childNodes are built up in an Array or Document Fragment.
+  useFragment: false,
 
   // By default HyperList will determine scroll offset from the container
   // element. You can override this lookup by using this hook.
