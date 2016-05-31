@@ -1,0 +1,10 @@
+node_modules
+coverage
+examples
+test
+.babelrc
+.gitattributes
+.gitignore
+.npmignore
+.travis.yml
+example.gif
