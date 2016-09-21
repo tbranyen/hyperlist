@@ -129,15 +129,25 @@ var HyperList = function () {
 
       Object.assign(this._config, defaultConfig, userProvidedConfig);
 
-      if (!element || element.nodeType !== 1) {
+      var config = this[_config];
+
+      if (!config.isReact && (!element || element.nodeType !== 1)) {
         throw new Error('HyperList requires a valid DOM Node container');
       }
 
+<<<<<<< HEAD
       this._element = element;
 
       var config = this._config;
 
       var scroller = this._scroller || config.scroller || document.createElement(config.scrollerTagName || 'tr');
+=======
+      this[_element] = config.isReact ? {} : element;
+
+      var scroller = this[_scroller] || config.scroller || config.isReact ? {
+        key: 'scroller'
+      } : document.createElement(config.scrollerTagName || 'tr');
+>>>>>>> f087f4e... Some initial work on it...
 
       // Default configuration option `useFragment` to `true`.
       if (typeof config.useFragment !== 'boolean') {
@@ -190,6 +200,7 @@ var HyperList = function () {
         }
       });
 
+<<<<<<< HEAD
       // Decorate the container element with styles that will match
       // the user supplied configuration.
       var elementStyle = {
@@ -200,6 +211,23 @@ var HyperList = function () {
       };
 
       HyperList.mergeStyle(element, elementStyle);
+=======
+      // If using React, the element object turns into a props object.
+      if (config.isReact) {
+        this[_element].style = {
+          width: '' + config.width,
+          height: '' + config.height,
+          overflow: 'auto',
+          position: 'relative',
+          padding: '0px'
+        };
+      }
+      // Decorate the container element with inline styles that will match
+      // the user supplied configuration.
+      else if (!config.isReact) {
+          element.setAttribute('style', '\n        width: ' + config.width + ';\n        height: ' + config.height + ';\n        overflow: auto;\n        position: relative;\n        padding: 0px;\n      ');
+        }
+>>>>>>> f087f4e... Some initial work on it...
 
       var scrollerHeight = config.itemHeight * config.total;
       var maxElementHeight = this._maxElementHeight;
@@ -208,6 +236,7 @@ var HyperList = function () {
         console.warn(['HyperList: The maximum element height', maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join(' '));
       }
 
+<<<<<<< HEAD
       var scrollerStyle = {
         opacity: '0',
         position: 'absolute',
@@ -220,6 +249,22 @@ var HyperList = function () {
       // Only append the scroller element once.
       if (!this._scroller) {
         element.appendChild(scroller);
+=======
+      if (config.isReact) {
+        scroller.style = Object.assign({}, scroller.style, {
+          opacity: 0,
+          position: 'absolute',
+          width: '1px',
+          height: scrollerHeight + 'px'
+        });
+      } else {
+        scroller.setAttribute('style', '\n        opacity: 0;\n        position: absolute;\n        width: 1px;\n        height: ' + scrollerHeight + 'px;\n      ');
+
+        // Only append the scroller element once.
+        if (!this[_scroller]) {
+          element.appendChild(scroller);
+        }
+>>>>>>> f087f4e... Some initial work on it...
       }
 
       // Set the scroller instance.
@@ -259,19 +304,44 @@ var HyperList = function () {
         height = this._itemHeights[i];
       }
 
-      if (!item || item.nodeType !== 1) {
+      var offsetTop = i * itemHeight;
+      var top = reverse ? (total - 1) * itemHeight - offsetTop : offsetTop;
+
+      // Check for valid DOM nodes, unless using React.
+      if (!config.isReact && (!item || item.nodeType !== 1)) {
         throw new Error('Generator did not return a DOM Node for index: ' + i);
       }
+      // Is not a React element.
+      else if (config.isReact && !item) {
+          throw new Error('Generator did not return a React Element for index: ' + i);
+        }
+        // Is a React element.
+        else if (config.isReact) {
+            var _oldClass = item.props.className || '';
+
+            return React.cloneElement(item, {
+              key: i,
+              className: _oldClass + ' ' + (config.rowClassName || 'vrow'),
+              style: Object.assign({}, item.props.style, {
+                position: 'absolute',
+                top: top + 'px'
+              })
+            });
+          }
 
       var oldClass = item.getAttribute('class') || '';
       item.setAttribute('class', oldClass + ' ' + (config.rowClassName || 'vrow'));
 
+<<<<<<< HEAD
       var top = this._itemPositions[i];
 
       HyperList.mergeStyle(item, {
         position: 'absolute',
         top: top + 'px'
       });
+=======
+      item.setAttribute('style', '\n      ' + (item.style.cssText || '') + '\n      position: absolute;\n      top: ' + top + 'px\n    ');
+>>>>>>> f087f4e... Some initial work on it...
 
       return item;
     }
@@ -323,7 +393,13 @@ var HyperList = function () {
       ;var scroller = this._scroller;
 
       // Keep the scroller in the list of children.
+<<<<<<< HEAD
       fragment[config.useFragment ? 'appendChild' : 'push'](scroller);
+=======
+      if (!config.isReact) {
+        fragment[config.useFragment ? 'appendChild' : 'push'](this[_scroller]);
+      }
+>>>>>>> f087f4e... Some initial work on it...
 
       for (var i = from; i < to; i++) {
         var row = this._getRow(i);
@@ -332,7 +408,7 @@ var HyperList = function () {
       }
 
       if (config.applyPatch) {
-        return config.applyPatch(element, fragment);
+        return config.applyPatch(element, fragment, scroller);
       }
 
       element.innerHTML = '';

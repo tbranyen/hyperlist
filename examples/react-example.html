@@ -60,59 +60,37 @@
 <script>
   const main = document.querySelector('main');
 
+  const Item = ({ row, className, style }) => {
+    return React.createElement('div', { className, style }, 'ITEM ' + row);
+  }
+
   class Container extends React.Component {
     constructor(props) {
       super(props);
 
-      this.container = ReactFauxDOM.createElement('div');
+      this.state = { scroller: { key: 'scroller' }, fragment: [], };
 
-      this.state = {
-        // Actual state.
-        children: React.createElement('div'),
+      const { height, itemHeight, total, reverse } = props;
 
-        // Configuration for HyperList.
-        config: {
-          // User configurable via props.
-          height: props.height,
-          itemHeight: props.itemHeight,
-          total: props.total,
-          reverse: props.reverse,
+      // HyperList Configuration.
+      this.config = {
+        height,
+        itemHeight,
+        total,
+        reverse,
 
-          useFragment: false,
-          scroller: ReactFauxDOM.createElement('div'),
+        isReact: true,
+        useFragment: false,
+        overrideScrollPosition: () => main.firstChild.scrollTop,
+        generate: (row) => React.createElement(Item, { row }),
 
-          // Required to override since React Faux DOM doesn't have scrollTop.
-          overrideScrollPosition() {
-            return main.firstChild.scrollTop;
-          },
-
-          applyPatch(element, fragment) {
-            element.childNodes.length = 0;
-            fragment.forEach(childNode => element.appendChild(childNode));
-          },
-
-          afterRender: () => {
-            this.state.children = this.container.toReact();
-            this.setState(this.state);
-          },
-
-          generate(row) {
-            var el = ReactFauxDOM.createElement('div');
-            var p = ReactFauxDOM.createElement('p');
-
-            el.appendChild(p);
-
-            p.innerHTML = 'ITEM ' + row;
-
-            return el;
-          }
-        }
+        applyPatch: (element, fragment, scroller) => {
+          this.setState({ element, fragment, scroller });
+        },
       };
     }
 
     componentDidMount() {
-      const config = this.state.config;
-
       // Create the HyperList once and refresh it whenever the resize event
       // triggers.
       this.list = HyperList.create(this.container, config);
@@ -120,11 +98,9 @@
       // Bind to the resize event, and since you should only ever have one
       // handler bound to this, we pave over whatever you had set before.
       window.onresize = e => {
-        config.height = window.innerHeight;
-        this.list.refresh(this.container, config);
+        this.config.height = window.innerHeight;
+        this.list.refresh(this, this.config);
       };
-
-      this.container.setAttribute('class', 'container');
     }
 
     componentWillUnmount() {
@@ -132,7 +108,14 @@
     }
 
     render() {
-      return this.state.children;
+      const elementProps = Object.assign({}, this.state.element, {
+        className: 'container'
+      });
+
+      return React.createElement('div', elementProps, [
+        React.createElement('div', this.state.scroller),
+        ...this.state.fragment,
+      ]);
     }
   }
 
