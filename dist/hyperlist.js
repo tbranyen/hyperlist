@@ -277,6 +277,7 @@ var HyperList = function () {
 }();
 
 exports.default = HyperList;
+module.exports = exports['default'];
 
 },{}]},{},[1])(1)
 });
