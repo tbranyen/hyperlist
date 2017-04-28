@@ -17,6 +17,7 @@
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-faux-dom": "^2.5.0",
+    "standard": "^10.0.2",
     "stringdom": "jugglinmike/stringdom#f42ad65227fc4e5a1d120ae432c7ec4eaf6aa11b",
     "watchify": "^3.7.0"
   },
@@ -42,7 +43,7 @@
     "build-faux-dom": "browserify -s ReactFauxDOM -r react-faux-dom -o dist/react-faux-dom.js",
     "build": "browserify -t [ babelify ] -s HyperList lib/index.js | derequire > dist/hyperlist.js",
     "watch": "watchify -t [ babelify ] -s HyperList lib/index.js -o 'derequire > dist/hyperlist.js' -v",
-    "test": "babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec"
+    "test": "standard --env mocha && babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec"
   },
   "author": "Tim Branyen (@tbranyen)",
   "contributors": [
