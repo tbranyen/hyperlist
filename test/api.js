@@ -20,6 +20,7 @@ describe('API', function () {
   it('can be initialized with new', () => {
     this.actual = new HyperList(this.fixture, {
       generate () {},
+      itemHeight: 100,
       total: 0
     })
 
@@ -29,6 +30,7 @@ describe('API', function () {
   it('can be initialized with create', () => {
     this.actual = HyperList.create(this.fixture, {
       generate () {},
+      itemHeight: 100,
       total: 0
     })
 
@@ -38,6 +40,7 @@ describe('API', function () {
   it('is not easy to access private members', () => {
     this.actual = new HyperList(this.fixture, {
       generate () {},
+      itemHeight: 100,
       total: 0
     })
 
@@ -48,6 +51,7 @@ describe('API', function () {
   it('can destroy an instance', () => {
     this.actual = new HyperList(this.fixture, {
       generate () {},
+      itemHeight: 100,
       total: 0
     })
 

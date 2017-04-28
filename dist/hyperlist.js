@@ -158,7 +158,9 @@ var HyperList = function () {
       }).forEach(function (prop) {
         var value = config[prop];
 
-        if (!value) {} else if (typeof value !== 'string' && typeof value !== 'number') {
+        if (!value) {
+          return;
+        } else if (typeof value !== 'string' && typeof value !== 'number') {
           var msg = 'Invalid optional `' + prop + '`, expected string or number';
           throw new Error(msg);
         } else if (isNumber(value) || value.slice(-1) !== '%') {
@@ -208,7 +210,8 @@ var HyperList = function () {
       var itemHeights = this._itemHeights;
       var itemPos = this._itemPositions;
 
-      itemHeights.forEach(function (itemHeight, i) {
+      itemHeights.slice(startFrom).forEach(function (itemHeight, i) {
+        console.log('Item Height: ' + itemHeight);
         var prevHeight = isNumber(itemPos[i - 1]) ? itemPos[i - 1] : -itemHeight;
         itemPos[i] = prevHeight + itemHeight;
       });
@@ -255,9 +258,7 @@ var HyperList = function () {
       var from = estFrom > total ? total : estFrom < 0 ? 0 : estFrom;
       var estTo = from + this._cachedItemsLen;
       var to = estTo > total ? total : estTo < 0 ? 0 : estTo;
-
       var fastCache = [];
-
       var state = { semaphore: null, isRendering: false };
       var arity = config.generate.length;
 
