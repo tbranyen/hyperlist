@@ -1,6 +1,7 @@
 ## HyperList
 
 [![Build Status](https://travis-ci.org/tbranyen/hyperlist.svg?branch=master)](https://travis-ci.org/tbranyen/hyperlist)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 This is a simple component that can be dropped into any JavaScript application
 and provide a virtual scrolling area that is highly performant and lightweight.
