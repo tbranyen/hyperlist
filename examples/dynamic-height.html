@@ -32,8 +32,6 @@
 
     .vrow {
       width: 100%;
-      height: 30px;
-      max-height: 30px;
       color: #000;
       margin: 0;
       padding-top: 10px;
@@ -57,27 +55,33 @@
   var config = {
     height: window.innerHeight,
     itemHeight: 50,
-    total: 100000,
+    total: 1000,
     // Set to true to put into 'chat mode'.
     reverse: false,
     scrollerTagName: 'div',
 
     generate(row, setHeight) {
-      var el = document.createElement("div");
-      el.innerHTML = "<p>ITEM " + row + "</p>";
-      setHeight(Math.random() * 50);
+      var newHeight = Math.floor(Math.random() * 50) + 50;
+      var el = Object.assign(document.createElement('div'), {
+        innerHTML: `<p>ITEM ${row}</p>`,
+      });
+
+      el.style.height = `${newHeight}px`;
+
+      setHeight(newHeight);
+
       return el;
     }
   };
 
-  var list = HyperList.default.create(container, config);
+  var list = HyperList.create(container, config);
 
   window.onresize = e => {
     config.height = window.innerHeight;
     list.refresh(container, config);
   };
 
-  container.classList.add("container");
+  container.classList.add('container');
 
   document.body.appendChild(container)
 </script>
