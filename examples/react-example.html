@@ -115,7 +115,7 @@
 
       // Create the HyperList once and refresh it whenever the resize event
       // triggers.
-      this.list = HyperList.default.create(this.container, config);
+      this.list = HyperList.create(this.container, config);
 
       // Bind to the resize event, and since you should only ever have one
       // handler bound to this, we pave over whatever you had set before.
