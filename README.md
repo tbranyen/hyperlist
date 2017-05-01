@@ -140,7 +140,7 @@ generate(index) {
 }
 ```
 
-You can also find a [working implementation in the examples directory](./examples/dynamic-height).
+You can also find a [working implementation in the examples directory](./examples/dynamic-height.html).
 
 #### Advanced example
 
