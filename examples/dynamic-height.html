@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>Hyper List Bind Scroll To Range Demo</title>
+  <title>Hyper List Demo</title>
 
   <style>
     body, html {
@@ -32,8 +32,6 @@
 
     .vrow {
       width: 100%;
-      height: 30px;
-      max-height: 30px;
       color: #000;
       margin: 0;
       padding-top: 10px;
@@ -47,34 +45,28 @@
       margin: 0;
       color: #5b5b5b;
     }
-
-    input { width: 100%; }
   </style>
 </head>
 <body>
-<input type="range" value="0" min="0" max="100">
 
 <script type="text/javascript" src="../dist/hyperlist.js"></script>
 <script>
-  var range = document.querySelector('input');
   var container = document.createElement('div');
-  var scroller = document.createElement('div');
-
   var config = {
-    height: window.innerHeight - parseFloat(range.offsetHeight + 5),
+    height: window.innerHeight,
     itemHeight: 50,
-    total: 100000,
-    scroller,
-
-    afterRender() {
-      var height = parseFloat(scroller.style.height);
-      range.value = (container.scrollTop / height) * 100
-    },
+    total: 1000,
+    // Set to true to put into 'chat mode'.
+    reverse: false,
+    scrollerTagName: 'div',
 
     generate(row) {
-      var el = document.createElement("div");
-      el.innerHTML = "<p>ITEM " + row + "</p>";
-      return el;
+      var newHeight = Math.floor(Math.random() * 50) + 50;
+      var el = Object.assign(document.createElement('div'), {
+        innerHTML: `<p>ITEM ${row}</p>`,
+      });
+
+      return {element: el, height: newHeight};
     }
   };
 
@@ -85,15 +77,9 @@
     list.refresh(container, config);
   };
 
-  range.oninput = e => {
-    var height = parseFloat(scroller.style.height);
-    container.scrollTop = height * (range.value / 100);
-  };
-
-  container.classList.add("container");
+  container.classList.add('container');
 
   document.body.appendChild(container)
 </script>
 </body>
 </html>
-
