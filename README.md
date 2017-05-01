@@ -5,8 +5,8 @@
 
 This is a simple component that can be dropped into any JavaScript application
 and provide a virtual scrolling area that is highly performant and lightweight.
-With zero dependencies and well under 200 lines of code sans comments, it is
-easy to parse and use.
+With zero dependencies and well under 300 lines of code sans comments, it is
+easy to understand and use.
 
 ## Demo
 
@@ -121,6 +121,26 @@ go beyond the defaults and required options.
 - `scroller` - Specify an element to be in the place of the scroller.
 - `useFragment` - Determines if a fragment is used internally or not, defaults
   to true.
+
+#### Variable height items
+
+When you are rendering a list of elements that have variable heights you may
+specific an object as the `generate` callback's return value that contains
+the signature: `{ element: domNode, height: 100 }`.
+
+For example:
+
+``` js
+// Wire up the data to the index. The index is then mapped to a Y position
+// in the container, using some height.
+generate(index) {
+  const el = document.createElement('div');
+  el.innerHTML = `ITEM ${index + 1}`;
+  return { element: el, height: Math.random() * 1000 };
+}
+```
+
+You can also find a [working implementation in the examples directory](./examples/dynamic-height).
 
 #### Advanced example
 
