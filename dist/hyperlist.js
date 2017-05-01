@@ -61,7 +61,7 @@ var HyperList = function () {
       // As said above, these values get set to put the fixture elements into the
       // right visual state.
       HyperList.mergeStyle(wrapper, { position: 'absolute', height: '1px', opacity: 0 });
-      HyperList.mergeStyle(fixture, { height: 1e9 });
+      HyperList.mergeStyle(fixture, { height: '1e9px' });
 
       // Add the fixture into the wrapper element.
       wrapper.appendChild(fixture);
@@ -335,7 +335,7 @@ var HyperList = function () {
   }, {
     key: '_computePositions',
     value: function _computePositions() {
-      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      var from = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
 
       var config = this._config;
       var total = config.total;
