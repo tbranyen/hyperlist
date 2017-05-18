@@ -3,6 +3,8 @@ import assert from 'assert'
 import HyperList from '../lib/index'
 
 describe('Rendering', function () {
+  this.timeout(10000)
+
   beforeEach(() => {
     this.fixture = document.createElement('div')
   })
@@ -56,5 +58,50 @@ describe('Rendering', function () {
       }), ['0px', '10px', '30px'])
       done()
     })
+  })
+
+  it('will show every elements with dynamic heights', (done) => {
+    const total = 100
+    const maxItemHeight = 100
+    const minItemHeight = 50
+    const heights = new Array(total).fill(0).map((e, i) => Math.random() * (maxItemHeight - minItemHeight) + minItemHeight)
+    const height = 400
+
+    this.fixture.scrollTop = 0
+    this.actual = new HyperList(this.fixture, {
+      generate (i) {
+        var el = document.createElement('div')
+        el.innerHTML = i
+        return {element: el, height: heights[i]}
+      },
+      height: height,
+      total: total,
+      itemHeight: maxItemHeight
+    })
+
+    let scrollHeight
+    let numberElementsShown = []
+
+    const doScroll = () => {
+      scrollHeight = parseFloat(this.fixture.querySelector('tr').style.height.replace('px', ''), 10)
+      const numbers = [].slice.call(this.fixture.querySelectorAll('div'))
+        .map((e) => parseInt(e.innerHTML))
+        .filter((e) => !~numberElementsShown.indexOf(e))
+
+      numberElementsShown.push.apply(numberElementsShown, numbers)
+
+      this.fixture.scrollTop += minItemHeight
+      this.actual._renderChunk()
+
+      if (this.fixture.scrollTop > scrollHeight) {
+        assert.equal(total, numberElementsShown.length)
+        done()
+        return
+      }
+
+      window.requestAnimationFrame(doScroll)
+    }
+
+    window.requestAnimationFrame(doScroll)
   })
 })
