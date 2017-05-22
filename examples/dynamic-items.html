@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Hyper List Demo</title>
+
+  <style>
+    body, html {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      min-height: 100%;
+      min-width: 100%;
+      text-align: center;
+    }
+    body {
+      overflow: hidden;
+    }
+
+  </style>
+</head>
+<body>
+
+<script type="text/javascript" src="../dist/hyperlist.js"></script>
+<script>
+  var data = ['a', 'b', 'c', 'd'];
+  var container = document.createElement('div');
+  var config = {
+    height: 100,
+    itemHeight: 10,
+    get total() {
+      return data.length + 20
+    },
+    generate(idx) {
+      var el = document.createElement('span')
+      el.innerHTML = data[idx] ? data[idx] : 'placeholder'
+
+      if (data[idx] && idx > 3) {
+        el.style.color = 'red'
+      }
+
+      return el
+    }
+  };
+
+  var list = HyperList.create(container, config);
+
+  document.body.appendChild(container)
+
+  setTimeout(function () {
+  	data.push.apply(data, ['e', 'f', 'g', 'h'])
+  	list.refresh(container, config)
+
+  	var notice = document.createElement('span')
+  	notice.innerHTML = 'Scroll down past "a"'
+  	document.body.appendChild(notice)
+  }, 2500)
+
+</script>
+</body>
+</html>
