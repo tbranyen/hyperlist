@@ -232,8 +232,8 @@ var HyperList = function () {
       // Each index in the array should represent the position in the DOM.
       this._computePositions(0);
 
-      // Render after refreshing.
-      this._renderChunk();
+      // Render after refreshing. Force render if we're calling refresh manually.
+      this._renderChunk(this._lastRepaint !== null);
 
       if (typeof config.afterRender === 'function') {
         config.afterRender();
@@ -288,23 +288,29 @@ var HyperList = function () {
     }
   }, {
     key: '_renderChunk',
-    value: function _renderChunk() {
+    value: function _renderChunk(force) {
       var config = this._config;
       var element = this._element;
       var scrollTop = this._getScrollPosition();
       var total = config.total;
 
       var from = config.reverse ? this._getReverseFrom(scrollTop) : this._getFrom(scrollTop) - 1;
-      from = from < 0 ? 0 : from;
 
-      if (this._lastFrom === from) {
+      if (from < 0 || from - this._cachedItemsLen < 0) {
+        from = 0;
+      }
+
+      if (!force && this._lastFrom === from) {
         return false;
       }
 
       this._lastFrom = from;
 
       var to = from + this._cachedItemsLen;
-      to = to > total ? total : to;
+
+      if (to > total || to + this._cachedItemsLen > total) {
+        to = total;
+      }
 
       // Append all the new rows in a document fragment that we will later append
       // to the parent node
@@ -335,7 +341,7 @@ var HyperList = function () {
   }, {
     key: '_computePositions',
     value: function _computePositions() {
-      var from = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
       var config = this._config;
       var total = config.total;
@@ -375,13 +381,19 @@ var HyperList = function () {
         height: scrollHeight + 'px'
       });
 
-      var averageHeight = scrollHeight / total;
-      var containerHeight = this._element.innerHeight ? this._element.innerHeight : this._containerHeight;
+      // Calculate the height median
+      var sortedItemHeights = this._itemHeights.slice(0).sort(function (a, b) {
+        return a - b;
+      });
+      var middle = Math.floor(total / 2);
+      var averageHeight = total % 2 === 0 ? (sortedItemHeights[middle] + sortedItemHeights[middle - 1]) / 2 : sortedItemHeights[middle];
+
+      var containerHeight = this._element.clientHeight ? this._element.clientHeight : this._containerHeight;
       this._screenItemsLen = Math.ceil(containerHeight / averageHeight);
       this._containerHeight = containerHeight;
 
       // Cache 3 times the number of items that fit in the container viewport.
-      this._cachedItemsLen = this._screenItemsLen * 3;
+      this._cachedItemsLen = Math.max(this._cachedItemsLen || 0, this._screenItemsLen * 3);
       this._averageHeight = averageHeight;
 
       if (config.reverse) {
