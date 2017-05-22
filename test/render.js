@@ -104,4 +104,45 @@ describe('Rendering', function () {
 
     window.requestAnimationFrame(doScroll)
   })
+
+  it.only('can refresh with new data', (done) => {
+    const data = ['a', 'b', 'c', 'd']
+    const config = {
+      generate (i) {
+        var el = document.createElement('div')
+        if (data[i]) {
+          el.innerHTML = data[i]
+        } else {
+          el.innerHTML = 'placeholder'
+        }
+        return el
+      },
+      height: 100,
+      overrideScrollPosition () { return 0 },
+      get total () {
+        return data.length + 20
+      },
+      itemHeight: 10
+    }
+
+    this.actual = new HyperList(this.fixture, config)
+
+    const getShown = () => {
+      return [].slice.call(this.fixture.querySelectorAll('div'))
+        .map((e) => e.innerHTML)
+        .filter((e) => e !== 'placeholder')
+    }
+
+    window.requestAnimationFrame(() => {
+      assert.deepEqual(data, getShown())
+
+      data.push(...['e', 'f', 'g', 'h'])
+      this.actual.refresh(this.fixture, config)
+
+      window.requestAnimationFrame(() => {
+        assert.deepEqual(data, getShown())
+        done()
+      })
+    })
+  })
 })
