@@ -18,7 +18,7 @@
     "react-dom": "^15.1.0",
     "react-faux-dom": "^2.5.0",
     "standard": "^10.0.2",
-    "stringdom": "jugglinmike/stringdom#f42ad65227fc4e5a1d120ae432c7ec4eaf6aa11b",
+    "stringdom": "jugglinmike/stringdom#ec8f199df36157330148b7a2e64b38c1f5008702",
     "watchify": "^3.7.0"
   },
   "keywords": [
