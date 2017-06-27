@@ -59,10 +59,10 @@
     return Math.floor(Math.random() * 50) + 50;
   }
 
+  // Toggle the element to go between 50px and 100px in height when clicked.
   function onClick(i) {
     return ev => {
-      heights[i] = heights[i] === 100 ? rand() : 100;
-      console.log('here', i, heights);
+      heights[i] = heights[i] === 100 ? 50 : 100;
       list.refresh(container, config);
     };
   }

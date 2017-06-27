@@ -296,7 +296,7 @@ var HyperList = function () {
 
       var from = config.reverse ? this._getReverseFrom(scrollTop) : this._getFrom(scrollTop) - 1;
 
-      if (from < 0 || from - this._cachedItemsLen < 0) {
+      if (from < 0 || from - this._screenItemsLen < 0) {
         from = 0;
       }
 
@@ -341,7 +341,7 @@ var HyperList = function () {
   }, {
     key: '_computePositions',
     value: function _computePositions() {
-      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      var from = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
 
       var config = this._config;
       var total = config.total;
