@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Hyper List Toggle Dynamic Height Demo</title>
+
+  <style>
+    body, html {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      min-height: 100%;
+      min-width: 100%;
+      text-align: center;
+    }
+    body {
+      overflow: hidden;
+    }
+
+    @media
+    only screen and (-webkit-min-device-pixel-ratio : 1.5),
+    only screen and (min-device-pixel-ratio : 1.5) {
+      .container {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+      }
+    }
+
+    .vrow {
+      width: 100%;
+      color: #000;
+      margin: 0;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .vrow p {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      color: #5b5b5b;
+    }
+  </style>
+</head>
+<body>
+
+<script type="text/javascript" src="../dist/hyperlist.js"></script>
+<script>
+  var list, config, container;
+  var total = 1000;
+  var heights = Array(total).fill(0).map(rand);
+
+  function rand() {
+    return Math.floor(Math.random() * 50) + 50;
+  }
+
+  // Toggle the element to go between 50px and 100px in height when clicked.
+  function onClick(i) {
+    return ev => {
+      heights[i] = heights[i] === 100 ? 50 : 100;
+      list.refresh(container, config);
+    };
+  }
+
+  container = document.createElement('div');
+  config = {
+    height: window.innerHeight,
+    itemHeight: 50,
+    total: total,
+    reverse: false,
+    scrollerTagName: 'div',
+
+    generate(row) {
+      var newHeight = Math.floor(Math.random() * 50) + 50;
+      var el = Object.assign(document.createElement('div'), {
+        innerHTML: `<p>ITEM ${row}</p>`,
+        onclick: onClick(row), 
+      });
+
+      return {element: el, height: heights[row]};
+    }
+  };
+
+  list = HyperList.create(container, config);
+
+  window.onresize = e => {
+    config.height = window.innerHeight;
+    list.refresh(container, config);
+  };
+
+  container.classList.add('container');
+
+  document.body.appendChild(container)
+</script>
+</body>
+</html>
