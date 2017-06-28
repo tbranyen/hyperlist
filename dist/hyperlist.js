@@ -237,8 +237,6 @@ var HyperList = function () {
         height: scrollerHeight + 'px'
       };
 
-      HyperList.mergeStyle(scroller, scrollerStyle);
-
       if (config.isReact) {
         scroller.style = Object.assign({}, scroller.style, {
           opacity: 0,
@@ -247,7 +245,7 @@ var HyperList = function () {
           height: scrollerHeight + 'px'
         });
       } else {
-        scroller.setAttribute('style', '\n        opacity: 0;\n        position: absolute;\n        width: 1px;\n        height: ' + scrollerHeight + 'px;\n      ');
+        HyperList.mergeStyle(scroller, scrollerStyle);
 
         // Only append the scroller element once.
         if (!this._scroller) {
