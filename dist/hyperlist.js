@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var defaultConfig = {
@@ -125,7 +127,8 @@ var HyperList = function () {
   }, {
     key: 'refresh',
     value: function refresh(element, userProvidedConfig) {
-      var _this2 = this;
+      var _this2 = this,
+          _scrollerStyle;
 
       Object.assign(this._config, defaultConfig, userProvidedConfig);
 
@@ -190,6 +193,8 @@ var HyperList = function () {
         }
       });
 
+      var isHoriz = Boolean(config.horizontal);
+
       // Decorate the container element with styles that will match
       // the user supplied configuration.
       var elementStyle = {
@@ -208,12 +213,10 @@ var HyperList = function () {
         console.warn(['HyperList: The maximum element height', maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join(' '));
       }
 
-      var scrollerStyle = {
+      var scrollerStyle = (_scrollerStyle = {
         opacity: '0',
-        position: 'absolute',
-        width: '1px',
-        height: scrollerHeight + 'px'
-      };
+        position: 'absolute'
+      }, _defineProperty(_scrollerStyle, isHoriz ? 'height' : 'width', '1px'), _defineProperty(_scrollerStyle, isHoriz ? 'width' : 'height', scrollerHeight + 'px'), _scrollerStyle);
 
       HyperList.mergeStyle(scroller, scrollerStyle);
 
@@ -268,10 +271,9 @@ var HyperList = function () {
 
       var top = this._itemPositions[i];
 
-      HyperList.mergeStyle(item, {
-        position: 'absolute',
-        top: top + 'px'
-      });
+      HyperList.mergeStyle(item, _defineProperty({
+        position: 'absolute'
+      }, config.horizontal ? 'left' : 'top', top + 'px'));
 
       return item;
     }
@@ -284,7 +286,7 @@ var HyperList = function () {
         return config.overrideScrollPosition();
       }
 
-      return this._element.scrollTop;
+      return this._element[config.horizontal ? 'scrollLeft' : 'scrollTop'];
     }
   }, {
     key: '_renderChunk',
@@ -366,20 +368,20 @@ var HyperList = function () {
   }, {
     key: '_computeScrollHeight',
     value: function _computeScrollHeight() {
-      var _this3 = this;
+      var _HyperList$mergeStyle2,
+          _this3 = this;
 
       var config = this._config;
+      var isHoriz = Boolean(config.horizontal);
       var total = config.total;
       var scrollHeight = this._itemHeights.reduce(function (a, b) {
         return a + b;
       }, 0);
 
-      HyperList.mergeStyle(this._scroller, {
+      HyperList.mergeStyle(this._scroller, (_HyperList$mergeStyle2 = {
         opacity: 0,
-        position: 'absolute',
-        width: '1px',
-        height: scrollHeight + 'px'
-      });
+        position: 'absolute'
+      }, _defineProperty(_HyperList$mergeStyle2, isHoriz ? 'height' : 'width', '1px'), _defineProperty(_HyperList$mergeStyle2, isHoriz ? 'width' : 'height', scrollHeight + 'px'), _HyperList$mergeStyle2));
 
       // Calculate the height median
       var sortedItemHeights = this._itemHeights.slice(0).sort(function (a, b) {
@@ -388,7 +390,8 @@ var HyperList = function () {
       var middle = Math.floor(total / 2);
       var averageHeight = total % 2 === 0 ? (sortedItemHeights[middle] + sortedItemHeights[middle - 1]) / 2 : sortedItemHeights[middle];
 
-      var containerHeight = this._element.clientHeight ? this._element.clientHeight : this._containerHeight;
+      var clientProp = isHoriz ? 'clientWidth' : 'clientHeight';
+      var containerHeight = this._element[clientProp] ? this._element[clientProp] : this._containerHeight;
       this._screenItemsLen = Math.ceil(containerHeight / averageHeight);
       this._containerHeight = containerHeight;
 
@@ -398,7 +401,11 @@ var HyperList = function () {
 
       if (config.reverse) {
         window.requestAnimationFrame(function () {
-          _this3._element.scrollTop = scrollHeight;
+          if (isHoriz) {
+            _this3._element.scrollLeft = scrollHeight;
+          } else {
+            _this3._element.scrollTop = scrollHeight;
+          }
         });
       }
 
