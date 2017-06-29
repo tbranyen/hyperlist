@@ -247,19 +247,19 @@ var HyperList = function () {
     value: function _getRow(i) {
       var config = this._config;
       var item = config.generate(i);
-      var height = item.height;
+      var dimension = config.horizontal ? item.width : item.height;
 
-      if (height !== undefined && isNumber(height)) {
+      if (dimension !== undefined && isNumber(dimension)) {
         item = item.element;
 
         // The height isn't the same as predicted, compute positions again
-        if (height !== this._itemHeights) {
-          this._itemHeights[i] = height;
+        if (dimension !== this._itemHeights) {
+          this._itemHeights[i] = dimension;
           this._computePositions(i);
           this._scrollHeight = this._computeScrollHeight(i);
         }
       } else {
-        height = this._itemHeights[i];
+        dimension = this._itemHeights[i];
       }
 
       if (!item || item.nodeType !== 1) {
@@ -343,7 +343,7 @@ var HyperList = function () {
   }, {
     key: '_computePositions',
     value: function _computePositions() {
-      var from = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
       var config = this._config;
       var total = config.total;
