@@ -108,6 +108,7 @@ go beyond the defaults and required options.
   the top. This works much better for chat and notifications experiences. This
   option will automatically scroll the container to the bottom every time the
   refresh method is called and during instantiation.
+- `horizontal` Change the rendering orientation to horizontal
 - `scrollerTagName` Is a TR by default which works fine in most cases. If you
   need a different element tag name, specify it here.
 - `total` The number of items in the list.

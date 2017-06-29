@@ -105,7 +105,7 @@ describe('Rendering', function () {
     window.requestAnimationFrame(doScroll)
   })
 
-  it.only('can refresh with new data', (done) => {
+  it('can refresh with new data', (done) => {
     const data = ['a', 'b', 'c', 'd']
     const config = {
       generate (i) {
