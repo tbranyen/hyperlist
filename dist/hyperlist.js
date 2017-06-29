@@ -127,8 +127,7 @@ var HyperList = function () {
   }, {
     key: 'refresh',
     value: function refresh(element, userProvidedConfig) {
-      var _this2 = this,
-          _scrollerStyle;
+      var _scrollerStyle;
 
       Object.assign(this._config, defaultConfig, userProvidedConfig);
 
@@ -170,7 +169,6 @@ var HyperList = function () {
       }).forEach(function (prop) {
         var value = config[prop];
         var isValueNumber = isNumber(value);
-        var isValuePercent = isValueNumber ? false : value.slice(-1) === '%';
 
         if (value && typeof value !== 'string' && typeof value !== 'number') {
           var msg = 'Invalid optional `' + prop + '`, expected string or number';
@@ -178,22 +176,24 @@ var HyperList = function () {
         } else if (isValueNumber) {
           config[prop] = value + 'px';
         }
-
-        if (prop !== 'height') {
-          return;
-        }
-
-        // Compute the containerHeight as number
-        var numberValue = isValueNumber ? value : parseInt(value.replace(/px|%/, ''), 10);
-
-        if (isValuePercent) {
-          _this2._containerHeight = window.innerHeight * numberValue / 100;
-        } else {
-          _this2._containerHeight = isNumber(value) ? value : numberValue;
-        }
       });
 
       var isHoriz = Boolean(config.horizontal);
+      var value = config[isHoriz ? 'width' : 'height'];
+
+      if (value) {
+        var isValueNumber = isNumber(value);
+        var isValuePercent = isValueNumber ? false : value.slice(-1) === '%';
+        // Compute the containerHeight as number
+        var numberValue = isValueNumber ? value : parseInt(value.replace(/px|%/, ''), 10);
+        var innerSize = window[isHoriz ? 'innerWidth' : 'innerHeight'];
+
+        if (isValuePercent) {
+          this._containerSize = innerSize * numberValue / 100;
+        } else {
+          this._containerSize = isNumber(value) ? value : numberValue;
+        }
+      }
 
       // Decorate the container element with styles that will match
       // the user supplied configuration.
@@ -369,7 +369,7 @@ var HyperList = function () {
     key: '_computeScrollHeight',
     value: function _computeScrollHeight() {
       var _HyperList$mergeStyle2,
-          _this3 = this;
+          _this2 = this;
 
       var config = this._config;
       var isHoriz = Boolean(config.horizontal);
@@ -391,9 +391,9 @@ var HyperList = function () {
       var averageHeight = total % 2 === 0 ? (sortedItemHeights[middle] + sortedItemHeights[middle - 1]) / 2 : sortedItemHeights[middle];
 
       var clientProp = isHoriz ? 'clientWidth' : 'clientHeight';
-      var containerHeight = this._element[clientProp] ? this._element[clientProp] : this._containerHeight;
+      var containerHeight = this._element[clientProp] ? this._element[clientProp] : this._containerSize;
       this._screenItemsLen = Math.ceil(containerHeight / averageHeight);
-      this._containerHeight = containerHeight;
+      this._containerSize = containerHeight;
 
       // Cache 3 times the number of items that fit in the container viewport.
       this._cachedItemsLen = Math.max(this._cachedItemsLen || 0, this._screenItemsLen * 3);
@@ -402,9 +402,9 @@ var HyperList = function () {
       if (config.reverse) {
         window.requestAnimationFrame(function () {
           if (isHoriz) {
-            _this3._element.scrollLeft = scrollHeight;
+            _this2._element.scrollLeft = scrollHeight;
           } else {
-            _this3._element.scrollTop = scrollHeight;
+            _this2._element.scrollTop = scrollHeight;
           }
         });
       }
@@ -427,7 +427,7 @@ var HyperList = function () {
     value: function _getReverseFrom(scrollTop) {
       var i = this._config.total - 1;
 
-      while (i > 0 && this._itemPositions[i] < scrollTop + this._containerHeight) {
+      while (i > 0 && this._itemPositions[i] < scrollTop + this._containerSize) {
         i--;
       }
 
