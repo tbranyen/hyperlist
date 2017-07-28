@@ -16,10 +16,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var defaultConfig = {
   width: '100%',
   height: '100%'
-};
 
-// Check for valid number.
-var isNumber = function isNumber(input) {
+  // Check for valid number.
+};var isNumber = function isNumber(input) {
   return Number(input) === Number(input);
 };
 
@@ -36,19 +35,50 @@ var HyperList = function () {
     }
 
     /**
+     * Update given attributes on an element
+     * @param {DOMElement} element
+     * @param {Object} values
+     */
+
+  }, {
+    key: 'transformElement',
+    value: function transformElement(element, values) {
+      for (var i in values) {
+        element.setAttribute(i, values[i]);
+      }
+
+      return element;
+    }
+
+    /**
      * Merge given css style on an element
      * @param {DOMElement} element
      * @param {Object} style
+     * @param {Boolean} forceClone
      */
 
   }, {
     key: 'mergeStyle',
-    value: function mergeStyle(element, style) {
+    value: function mergeStyle(element, style, forceClone) {
       for (var i in style) {
         if (element.style[i] !== style[i]) {
           element.style[i] = style[i];
         }
       }
+
+      return element;
+    }
+
+    /**
+     * Return given attribute key of an element
+     * @param {DOMElement} element
+     * @param {String} key
+     */
+
+  }, {
+    key: 'inspectElement',
+    value: function inspectElement(element, key) {
+      return element.getAttribute(key);
     }
   }, {
     key: 'getMaxBrowserHeight',
@@ -89,6 +119,18 @@ var HyperList = function () {
     this._config = {};
     this._lastRepaint = null;
     this._maxElementHeight = HyperList.getMaxBrowserHeight();
+
+    if (!userProvidedConfig.inspectElement || typeof userProvidedConfig.inspectElement !== 'function') {
+      userProvidedConfig.inspectElement = HyperList.inspectElement;
+    }
+
+    if (!userProvidedConfig.transformElement || typeof userProvidedConfig.transformElement !== 'function') {
+      userProvidedConfig.transformElement = HyperList.transformElement;
+    }
+
+    if (!userProvidedConfig.mergeStyle || typeof userProvidedConfig.mergeStyle !== 'function') {
+      userProvidedConfig.mergeStyle = HyperList.mergeStyle;
+    }
 
     this.refresh(element, userProvidedConfig);
 
@@ -131,7 +173,7 @@ var HyperList = function () {
 
       Object.assign(this._config, defaultConfig, userProvidedConfig);
 
-      if (!element || element.nodeType !== 1) {
+      if (!element || typeof element.render !== 'function' && element.nodeType !== 1) {
         throw new Error('HyperList requires a valid DOM Node container');
       }
 
@@ -204,7 +246,7 @@ var HyperList = function () {
         position: 'relative'
       };
 
-      HyperList.mergeStyle(element, elementStyle);
+      config.mergeStyle(element, elementStyle);
 
       var scrollerHeight = config.itemHeight * config.total;
       var maxElementHeight = this._maxElementHeight;
@@ -218,10 +260,10 @@ var HyperList = function () {
         position: 'absolute'
       }, _defineProperty(_scrollerStyle, isHoriz ? 'height' : 'width', '1px'), _defineProperty(_scrollerStyle, isHoriz ? 'width' : 'height', scrollerHeight + 'px'), _scrollerStyle);
 
-      HyperList.mergeStyle(scroller, scrollerStyle);
+      config.mergeStyle(scroller, scrollerStyle);
 
-      // Only append the scroller element once.
-      if (!this._scroller) {
+      // Only append the scroller element once if DOM node.
+      if (!this._scroller && element.nodeType === 1) {
         element.appendChild(scroller);
       }
 
@@ -262,18 +304,22 @@ var HyperList = function () {
         height = this._itemHeights[i];
       }
 
-      if (!item || item.nodeType !== 1) {
+      if (!item || config.transformElement === HyperList.transformElement && item.nodeType !== 1) {
         throw new Error('Generator did not return a DOM Node for index: ' + i);
       }
 
-      var oldClass = item.getAttribute('class') || '';
-      item.setAttribute('class', oldClass + ' ' + (config.rowClassName || 'vrow'));
+      var oldClass = config.inspectElement(item, 'class') || '';
+      item = config.transformElement(item, {
+        key: i,
+        class: oldClass + ' ' + (config.rowClassName || 'vrow')
+      });
 
       var top = this._itemPositions[i];
 
-      HyperList.mergeStyle(item, _defineProperty({
+      // Possibly need to clone element
+      item = config.mergeStyle(item, _defineProperty({
         position: 'absolute'
-      }, config.horizontal ? 'left' : 'top', top + 'px'));
+      }, config.horizontal ? 'left' : 'top', top + 'px'), true);
 
       return item;
     }
@@ -337,13 +383,15 @@ var HyperList = function () {
         return config.applyPatch(element, fragment);
       }
 
-      element.innerHTML = '';
-      element.appendChild(fragment);
+      if (element.nodeType === 1) {
+        element.innerHTML = '';
+        element.appendChild(fragment);
+      }
     }
   }, {
     key: '_computePositions',
     value: function _computePositions() {
-      var from = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
       var config = this._config;
       var total = config.total;
@@ -368,7 +416,7 @@ var HyperList = function () {
   }, {
     key: '_computeScrollHeight',
     value: function _computeScrollHeight() {
-      var _HyperList$mergeStyle2,
+      var _config$mergeStyle2,
           _this2 = this;
 
       var config = this._config;
@@ -378,10 +426,10 @@ var HyperList = function () {
         return a + b;
       }, 0);
 
-      HyperList.mergeStyle(this._scroller, (_HyperList$mergeStyle2 = {
+      config.mergeStyle(this._scroller, (_config$mergeStyle2 = {
         opacity: 0,
         position: 'absolute'
-      }, _defineProperty(_HyperList$mergeStyle2, isHoriz ? 'height' : 'width', '1px'), _defineProperty(_HyperList$mergeStyle2, isHoriz ? 'width' : 'height', scrollHeight + 'px'), _HyperList$mergeStyle2));
+      }, _defineProperty(_config$mergeStyle2, isHoriz ? 'height' : 'width', '1px'), _defineProperty(_config$mergeStyle2, isHoriz ? 'width' : 'height', scrollHeight + 'px'), _config$mergeStyle2));
 
       // Calculate the height median
       var sortedItemHeights = this._itemHeights.slice(0).sort(function (a, b) {
