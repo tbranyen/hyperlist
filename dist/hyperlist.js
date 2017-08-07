@@ -105,7 +105,8 @@ var HyperList = function () {
         return;
       }
 
-      if (!lastRepaint || Math.abs(scrollTop - lastRepaint) > _this._averageHeight) {
+      var diff = lastRepaint ? scrollTop - lastRepaint : 0;
+      if (!lastRepaint || diff < 0 || diff > _this._averageHeight) {
         var rendered = _this._renderChunk();
 
         _this._lastRepaint = scrollTop;
@@ -195,22 +196,27 @@ var HyperList = function () {
         }
       }
 
-      // Decorate the container element with styles that will match
-      // the user supplied configuration.
-      var elementStyle = {
-        width: '' + config.width,
-        height: '' + config.height,
-        overflow: 'auto',
-        position: 'relative'
-      };
-
-      HyperList.mergeStyle(element, elementStyle);
-
+      var scrollContainer = config.scrollContainer;
       var scrollerHeight = config.itemHeight * config.total;
       var maxElementHeight = this._maxElementHeight;
 
       if (scrollerHeight > maxElementHeight) {
         console.warn(['HyperList: The maximum element height', maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join(' '));
+      }
+
+      // Decorate the container element with styles that will match
+      // the user supplied configuration.
+      var elementStyle = {
+        width: '' + config.width,
+        height: scrollContainer ? scrollerHeight + 'px' : '' + config.height,
+        overflow: scrollContainer ? 'none' : 'auto',
+        position: 'relative'
+      };
+
+      HyperList.mergeStyle(element, elementStyle);
+
+      if (scrollContainer) {
+        HyperList.mergeStyle(config.scrollContainer, { overflow: 'auto' });
       }
 
       var scrollerStyle = (_scrollerStyle = {
@@ -343,7 +349,7 @@ var HyperList = function () {
   }, {
     key: '_computePositions',
     value: function _computePositions() {
-      var from = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
       var config = this._config;
       var total = config.total;
@@ -391,7 +397,8 @@ var HyperList = function () {
       var averageHeight = total % 2 === 0 ? (sortedItemHeights[middle] + sortedItemHeights[middle - 1]) / 2 : sortedItemHeights[middle];
 
       var clientProp = isHoriz ? 'clientWidth' : 'clientHeight';
-      var containerHeight = this._element[clientProp] ? this._element[clientProp] : this._containerSize;
+      var element = config.scrollContainer ? config.scrollContainer : this._element;
+      var containerHeight = element[clientProp] ? element[clientProp] : this._containerSize;
       this._screenItemsLen = Math.ceil(containerHeight / averageHeight);
       this._containerSize = containerHeight;
 
