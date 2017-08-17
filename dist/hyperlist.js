@@ -16,11 +16,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var defaultConfig = {
   width: '100%',
   height: '100%'
+
+  // Check for valid number.
+};var isNumber = function isNumber(input) {
+  return Number(input) === Number(input);
 };
 
-// Check for valid number.
-var isNumber = function isNumber(input) {
-  return Number(input) === Number(input);
+// Add a class to an element.
+var addClass = 'classList' in document.documentElement ? function (element, className) {
+  element.classList.add(className);
+} : function (element, className) {
+  var oldClass = element.getAttribute('class') || '';
+  element.setAttribute('class', oldClass + ' ' + className);
 };
 
 /**
@@ -105,7 +112,8 @@ var HyperList = function () {
         return;
       }
 
-      if (!lastRepaint || Math.abs(scrollTop - lastRepaint) > _this._averageHeight) {
+      var diff = lastRepaint ? scrollTop - lastRepaint : 0;
+      if (!lastRepaint || diff < 0 || diff > _this._averageHeight) {
         var rendered = _this._renderChunk();
 
         _this._lastRepaint = scrollTop;
@@ -266,8 +274,7 @@ var HyperList = function () {
         throw new Error('Generator did not return a DOM Node for index: ' + i);
       }
 
-      var oldClass = item.getAttribute('class') || '';
-      item.setAttribute('class', oldClass + ' ' + (config.rowClassName || 'vrow'));
+      addClass(item, config.rowClassName || 'vrow');
 
       var top = this._itemPositions[i];
 
@@ -343,7 +350,7 @@ var HyperList = function () {
   }, {
     key: '_computePositions',
     value: function _computePositions() {
-      var from = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+      var from = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
       var config = this._config;
       var total = config.total;
