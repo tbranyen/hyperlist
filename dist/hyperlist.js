@@ -203,22 +203,27 @@ var HyperList = function () {
         }
       }
 
-      // Decorate the container element with styles that will match
-      // the user supplied configuration.
-      var elementStyle = {
-        width: '' + config.width,
-        height: '' + config.height,
-        overflow: 'auto',
-        position: 'relative'
-      };
-
-      HyperList.mergeStyle(element, elementStyle);
-
+      var scrollContainer = config.scrollContainer;
       var scrollerHeight = config.itemHeight * config.total;
       var maxElementHeight = this._maxElementHeight;
 
       if (scrollerHeight > maxElementHeight) {
         console.warn(['HyperList: The maximum element height', maxElementHeight + 'px has', 'been exceeded; please reduce your item height.'].join(' '));
+      }
+
+      // Decorate the container element with styles that will match
+      // the user supplied configuration.
+      var elementStyle = {
+        width: '' + config.width,
+        height: scrollContainer ? scrollerHeight + 'px' : '' + config.height,
+        overflow: scrollContainer ? 'none' : 'auto',
+        position: 'relative'
+      };
+
+      HyperList.mergeStyle(element, elementStyle);
+
+      if (scrollContainer) {
+        HyperList.mergeStyle(config.scrollContainer, { overflow: 'auto' });
       }
 
       var scrollerStyle = (_scrollerStyle = {
@@ -398,7 +403,8 @@ var HyperList = function () {
       var averageHeight = total % 2 === 0 ? (sortedItemHeights[middle] + sortedItemHeights[middle - 1]) / 2 : sortedItemHeights[middle];
 
       var clientProp = isHoriz ? 'clientWidth' : 'clientHeight';
-      var containerHeight = this._element[clientProp] ? this._element[clientProp] : this._containerSize;
+      var element = config.scrollContainer ? config.scrollContainer : this._element;
+      var containerHeight = element[clientProp] ? element[clientProp] : this._containerSize;
       this._screenItemsLen = Math.ceil(containerHeight / averageHeight);
       this._containerSize = containerHeight;
 
