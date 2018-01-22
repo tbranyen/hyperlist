@@ -55,9 +55,6 @@ errors. You can mutate them by setting a new object in the refresh method.
 list.refresh(element, newConfig);
 ```
 
-- `height` The value that is used on the container, if you use a string, it
-  will read the offsetHeight from the container after setting the css. This way
-  you can specify any unit and have it calculate correctly.
 - `itemHeight` A single value that is the height for every single element in
   the list.
 - `total` The number of items in the list.
@@ -75,10 +72,6 @@ const container = document.createElement('div');
 // Pass the container element and configuration to the HyperList constructor.
 // You can optionally use the create method if you prefer to avoid `new`.
 const list = HyperList.create(container, {
-  // Default to 100% width. And specify the container to be 300px tall, sets
-  // this as an inline style.
-  height: 300,
-
   // All items must be the exact same height currently. Although since there is
   // a generate method, in the future this should be configurable.
   itemHeight: 30,
@@ -109,6 +102,8 @@ go beyond the defaults and required options.
   option will automatically scroll the container to the bottom every time the
   refresh method is called and during instantiation.
 - `horizontal` Change the rendering orientation to horizontal
+- `width` The container width as a number or string (defaults to `100%`)
+- `height` The container height as a number or string (defaults to `100%`)
 - `scrollerTagName` Is a TR by default which works fine in most cases. If you
   need a different element tag name, specify it here.
 - `rowClassName` Any custom classes to add to the row.
