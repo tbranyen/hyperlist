@@ -111,7 +111,6 @@ go beyond the defaults and required options.
 - `horizontal` Change the rendering orientation to horizontal
 - `scrollerTagName` Is a TR by default which works fine in most cases. If you
   need a different element tag name, specify it here.
-- `total` The number of items in the list.
 - `rowClassName` Any custom classes to add to the row.
 - `overrideScrollPosition` Pull the scrollTop value from somewhere else, this
   allows for binding range elements to the scroll position.
