@@ -12,3 +12,8 @@ global.document.createComment = function () {
 // Ensure (request|cancel)AnimationFrame is a thing.
 window.requestAnimationFrame = fn => setTimeout(fn, 10)
 window.cancelAnimationFrame = timeout => clearTimeout(timeout)
+
+// Ensure getComputedStyle is a thing.
+window.getComputedStyle = () => ({
+  getPropertyValue: () => '0px'
+})

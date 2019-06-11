@@ -43,7 +43,7 @@ describe('Reverse feature', function () {
 
       applyPatch (element, fragment) {
         childNodes = fragment.map(childNode => {
-          if (!childNode.style.top) {
+          if (!childNode.style.top || childNode.nodeName === 'tr') {
             return false
           }
 
