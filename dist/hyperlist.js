@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.HyperList = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.HyperList = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(_dereq_,module,exports){
 'use strict';
 
 // Default configuration.
@@ -238,6 +238,10 @@ var HyperList = function () {
         element.appendChild(scroller);
       }
 
+      var padding = this._computeScrollPadding();
+      this._scrollPaddingBottom = padding.bottom;
+      this._scrollPaddingTop = padding.top;
+
       // Set the scroller instance.
       this._scroller = scroller;
       this._scrollHeight = this._computeScrollHeight();
@@ -266,7 +270,7 @@ var HyperList = function () {
         item = item.element;
 
         // The height isn't the same as predicted, compute positions again
-        if (height !== this._itemHeights) {
+        if (height !== this._itemHeights[i]) {
           this._itemHeights[i] = height;
           this._computePositions(i);
           this._scrollHeight = this._computeScrollHeight(i);
@@ -281,7 +285,7 @@ var HyperList = function () {
 
       addClass(item, config.rowClassName || 'vrow');
 
-      var top = this._itemPositions[i];
+      var top = this._itemPositions[i] + this._scrollPaddingTop;
 
       HyperList.mergeStyle(item, _defineProperty({
         position: 'absolute'
@@ -388,11 +392,12 @@ var HyperList = function () {
       var total = config.total;
       var scrollHeight = this._itemHeights.reduce(function (a, b) {
         return a + b;
-      }, 0);
+      }, 0) + this._scrollPaddingBottom + this._scrollPaddingTop;
 
       HyperList.mergeStyle(this._scroller, (_HyperList$mergeStyle2 = {
         opacity: 0,
-        position: 'absolute'
+        position: 'absolute',
+        top: '0px'
       }, _defineProperty(_HyperList$mergeStyle2, isHoriz ? 'height' : 'width', '1px'), _defineProperty(_HyperList$mergeStyle2, isHoriz ? 'width' : 'height', scrollHeight + 'px'), _HyperList$mergeStyle2));
 
       // Calculate the height median
@@ -423,6 +428,41 @@ var HyperList = function () {
       }
 
       return scrollHeight;
+    }
+  }, {
+    key: '_computeScrollPadding',
+    value: function _computeScrollPadding() {
+      var config = this._config;
+      var isHoriz = Boolean(config.horizontal);
+      var isReverse = config.reverse;
+      var styles = window.getComputedStyle(this._element);
+
+      var padding = function padding(location) {
+        var cssValue = styles.getPropertyValue('padding-' + location);
+        return parseInt(cssValue, 10) || 0;
+      };
+
+      if (isHoriz && isReverse) {
+        return {
+          bottom: padding('left'),
+          top: padding('right')
+        };
+      } else if (isHoriz) {
+        return {
+          bottom: padding('right'),
+          top: padding('left')
+        };
+      } else if (isReverse) {
+        return {
+          bottom: padding('top'),
+          top: padding('bottom')
+        };
+      } else {
+        return {
+          bottom: padding('bottom'),
+          top: padding('top')
+        };
+      }
     }
   }, {
     key: '_getFrom',

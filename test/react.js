@@ -54,7 +54,7 @@ describe('React', function () {
 
       const actual = renderedString
 
-      const expected = '<div style="width:100%;height:5px;overflow:auto;position:relative;" data-reactroot="" data-reactid="1" data-react-checksum="803780303"><div style="opacity:0;position:absolute;width:1px;height:3px;" data-reactid="2"></div><div style="opacity:0;position:absolute;width:1px;height:3px;" data-reactid="3"></div><span style="position:absolute;top:0px;" class=" vrow" data-reactid="4"></span><span style="position:absolute;top:1px;" class=" vrow" data-reactid="5">1</span><span style="position:absolute;top:2px;" class=" vrow" data-reactid="6">2</span></div>'
+      const expected = '<div style="width:100%;height:5px;overflow:auto;position:relative;" data-reactroot="" data-reactid="1" data-react-checksum="332446863"><div style="opacity:0;position:absolute;width:1px;height:3px;top:0px;" data-reactid="2"></div><div style="opacity:0;position:absolute;width:1px;height:3px;top:0px;" data-reactid="3"></div><span style="position:absolute;top:0px;" class=" vrow" data-reactid="4"></span><span style="position:absolute;top:1px;" class=" vrow" data-reactid="5">1</span><span style="position:absolute;top:2px;" class=" vrow" data-reactid="6">2</span></div>'
 
       assert.equal(actual, expected)
       done()
