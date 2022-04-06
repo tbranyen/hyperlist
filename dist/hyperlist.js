@@ -70,8 +70,8 @@ var HyperList = function () {
       // As said above, these values get set to put the fixture elements into the
       // right visual state.
       HyperList.mergeStyle(wrapper, { position: 'absolute', height: '1px', opacity: 0 });
-	 
-	  var fixture_height_factor = 7;
+    
+      var fixture_height_factor = 7;
       HyperList.mergeStyle(fixture, { height: 10**fixture_height_factor + 'px' });
 
       // Add the fixture into the wrapper element.
@@ -83,49 +83,48 @@ var HyperList = function () {
       // Get the maximum element height in pixels.
       var maxElementHeight = fixture.offsetHeight;
 
-	
-	  // Check if we can maybe get a bigger offsetHeight.
-	  var max_fixture_height_factor = fixture_height_factor + 1;
-	  fixture.style.height = 10**max_fixture_height_factor + 'px';
-	  if ( maxElementHeight !== fixture.offsetHeight ) {
+      // Check if we can maybe get a bigger offsetHeight.
+      var max_fixture_height_factor = fixture_height_factor + 1;
+      fixture.style.height = 10**max_fixture_height_factor + 'px';
 
-		  maxElementHeight = fixture.offsetHeight;
+      if (maxElementHeight !== fixture.offsetHeight) {
+        maxElementHeight = fixture.offsetHeight;
 
-		  // Keep increasing the height of fixture.style.height until the offsetHeight stops changing OR until it returns 0
-		  // If we are higher than the max, Chrome will return the max, Firefox will return 0.
-		  while ( fixture.offsetHeight !== 0 && maxElementHeight !== fixture.offsetHeight ) {
-			  max_fixture_height_factor++;
-			  fixture.style.height = 10**max_fixture_height_factor + 'px';
+        // Keep increasing the height of fixture.style.height until the offsetHeight stops changing OR until it returns 0
+        // If we are higher than the max, Chrome will return the max, Firefox will return 0.
+        while ( fixture.offsetHeight !== 0 && maxElementHeight !== fixture.offsetHeight ) {
+          max_fixture_height_factor++;
+          fixture.style.height = 10**max_fixture_height_factor + 'px';
 
-			  if ( fixture.offsetHeight !== 0 ) {
-					maxElementHeight = fixture.offsetHeight;
-			  }
-		  }
+          if ( fixture.offsetHeight !== 0 ) {
+            maxElementHeight = fixture.offsetHeight;
+          }
+        }
 
-		  // We went too high and we're on a browser that returns 0 when it's too high.
-		  if ( fixture.offsetHeight === 0 ) {
-			var high = 10**max_fixture_height_factor;
-			var low = 10**fixture_height_factor;
-			var cur = high;
-			var prevcur = high;
-			while(maxElementHeight === 0){
-				prevcur = cur;
-				cur = parseInt((high + low) / 2);
-				fixture.style.height = cur;
+        // We went too high and we're on a browser that returns 0 when it's too high.
+        if ( fixture.offsetHeight === 0 ) {
+          var high = 10**max_fixture_height_factor;
+          var low = 10**fixture_height_factor;
+          var cur = high;
+          var prevcur = high;
+          while(maxElementHeight === 0){
+            prevcur = cur;
+            cur = parseInt((high + low) / 2);
+            fixture.style.height = cur;
 
-				if ( cur === prevcur ) {
-					// No more changes happening, we found the max value.
-					maxElementHeight = cur;
-				} else if ( fixture.offsetHeight > 0 ) {
-					// We found a new working value.
-					low = cur;
-				} else if (fixture.offsetHeight === 0 ){
-					// Half way is still too high. 
-					high = cur;
-				}
-			}
-		}
-	  }
+            if ( cur === prevcur ) {
+              // No more changes happening, we found the max value.
+              maxElementHeight = cur;
+            } else if ( fixture.offsetHeight > 0 ) {
+              // We found a new working value.
+              low = cur;
+            } else if (fixture.offsetHeight === 0 ){
+              // Half way is still too high. 
+              high = cur;
+            }
+          }
+        }
+      }
 
       // Remove the element immediately after reading the value.
       document.body.removeChild(wrapper);
